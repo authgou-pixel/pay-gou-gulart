@@ -55,6 +55,10 @@ export default {
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-success': 'var(--gradient-success)',
+        'gradient-card': 'var(--gradient-card)',
+      },
+      boxShadow: {
+        'purple': 'var(--shadow-purple)',
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -62,10 +62,10 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/30 to-background p-4">
-      <Card className="w-full max-w-md shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-background p-4">
+      <Card className="w-full max-w-md shadow-purple border-primary/20">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center">
+          <CardTitle className="text-3xl font-bold text-center bg-gradient-hero bg-clip-text text-transparent">
             {isLogin ? "Entrar" : "Criar Conta"}
           </CardTitle>
           <CardDescription className="text-center">
@@ -85,6 +85,7 @@ const Auth = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  className="border-primary/20"
                 />
               </div>
             )}
@@ -98,6 +99,7 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="border-primary/20"
               />
             </div>
             
@@ -111,12 +113,13 @@ const Auth = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                className="border-primary/20"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-primary hover:bg-primary/90"
+              className="w-full bg-gradient-hero hover:opacity-90 shadow-purple"
               disabled={loading}
             >
               {loading ? (

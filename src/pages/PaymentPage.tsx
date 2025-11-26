@@ -105,8 +105,8 @@ const PaymentPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background p-4 flex items-center justify-center">
-      <Card className="w-full max-w-lg shadow-xl">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background p-4 flex items-center justify-center">
+      <Card className="w-full max-w-lg shadow-purple border-primary/20">
         {!showPayment ? (
           <>
             <CardHeader>
@@ -126,6 +126,7 @@ const PaymentPage = () => {
                   placeholder="Nome completo"
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
+                  className="border-primary/20"
                 />
               </div>
               
@@ -137,11 +138,12 @@ const PaymentPage = () => {
                   placeholder="seu@email.com"
                   value={buyerEmail}
                   onChange={(e) => setBuyerEmail(e.target.value)}
+                  className="border-primary/20"
                 />
               </div>
 
               <Button 
-                className="w-full bg-gradient-hero hover:opacity-90"
+                className="w-full bg-gradient-hero hover:opacity-90 shadow-purple"
                 onClick={handleGeneratePayment}
               >
                 Gerar Pagamento PIX
@@ -175,12 +177,13 @@ const PaymentPage = () => {
                   <Input
                     value={pixCode}
                     readOnly
-                    className="font-mono text-xs"
+                    className="font-mono text-xs border-primary/20"
                   />
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={copyPixCode}
+                    className="border-primary/20 hover:bg-primary/10"
                   >
                     {copied ? (
                       <Check className="h-4 w-4 text-success" />

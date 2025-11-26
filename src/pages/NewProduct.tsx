@@ -66,22 +66,22 @@ const NewProduct = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+      <header className="border-b bg-card/50 backdrop-blur-sm border-primary/20">
         <div className="container mx-auto px-4 py-4">
           <Button
             variant="ghost"
             onClick={() => navigate("/dashboard")}
-            className="mb-2"
+            className="mb-2 hover:bg-primary/10"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <h1 className="text-2xl font-bold text-primary">Novo Produto</h1>
+          <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Novo Produto</h1>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card>
+        <Card className="border-primary/20 shadow-purple">
           <CardHeader>
             <CardTitle>Informações do Produto</CardTitle>
             <CardDescription>
@@ -98,6 +98,7 @@ const NewProduct = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
+                  className="border-primary/20"
                 />
               </div>
 
@@ -109,6 +110,7 @@ const NewProduct = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={4}
+                  className="border-primary/20"
                 />
               </div>
 
@@ -123,6 +125,7 @@ const NewProduct = () => {
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   required
+                  className="border-primary/20"
                 />
               </div>
 
@@ -132,7 +135,7 @@ const NewProduct = () => {
                   value={formData.content_type}
                   onValueChange={(value) => setFormData({ ...formData, content_type: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-primary/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -158,6 +161,7 @@ const NewProduct = () => {
                   value={formData.content_url}
                   onChange={(e) => setFormData({ ...formData, content_url: e.target.value })}
                   required
+                  className="border-primary/20"
                 />
                 <p className="text-sm text-muted-foreground">
                   {formData.content_type === "video"
@@ -168,7 +172,7 @@ const NewProduct = () => {
 
               <Button 
                 type="submit" 
-                className="w-full"
+                className="w-full bg-gradient-hero hover:opacity-90 shadow-purple"
                 disabled={loading}
               >
                 {loading ? (
