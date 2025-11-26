@@ -163,116 +163,89 @@ const Dashboard = () => {
       </Sidebar>
 
       <SidebarInset className="bg-background">
-        <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-primary/20 bg-gradient-card shadow-purple">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Vendas</CardTitle>
-              <DollarSign className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.totalSales}</div>
-              <p className="text-xs text-muted-foreground">vendas aprovadas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-primary/20 bg-gradient-card shadow-purple">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Faturamento</CardTitle>
-              <DollarSign className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">
-                R$ {stats.totalRevenue.toFixed(2)}
+        <div className="w-full bg-card/80 border-b border-border/50">
+          <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">R$ 0,00 / R$ 10,0K</div>
+              <div className="w-40 h-2 bg-muted rounded">
+                <div className="h-2 bg-primary rounded" style={{ width: "0%" }} />
               </div>
-              <p className="text-xs text-muted-foreground">receita total</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded-full bg-muted" />
+              <div className="size-8 rounded-full bg-muted" />
+            </div>
+          </div>
+        </div>
+        <main className="mx-auto max-w-6xl px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-card">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Saldo Pix Disponível</CardTitle>
+              <DollarSign className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">R$ 0,00</div>
+              <p className="text-xs text-muted-foreground">Disponível para saque</p>
             </CardContent>
           </Card>
 
-          <Card className="border-primary/20 bg-gradient-card shadow-purple">
+          <Card className="bg-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Produtos</CardTitle>
+              <CardTitle className="text-sm font-medium">Saldo Crypto Disponível</CardTitle>
+              <DollarSign className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">R$ 0,00</div>
+              <p className="text-xs text-muted-foreground">Nesse Mês</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">PIX Gerados</CardTitle>
               <Package className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.productsCount}</div>
-              <p className="text-xs text-muted-foreground">produtos cadastrados</p>
+              <div className="text-2xl font-bold">0</div>
+              <p className="text-xs text-muted-foreground">Nesse Mês</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-card">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Volume Total</CardTitle>
+              <Package className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">R$ 0,00</div>
+              <p className="text-xs text-muted-foreground">Nesse Mês</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">Meus Produtos</h2>
-          <Button onClick={() => navigate("/dashboard/new-product")} className="bg-primary hover:bg-primary/90 shadow-purple">
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Produto
-          </Button>
-        </div>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-sm">Estatísticas de Vendas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 w-full bg-muted rounded" />
+          </CardContent>
+        </Card>
 
-        {products.length === 0 ? (
-          <Card className="border-primary/20">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Package className="h-12 w-12 text-primary mb-4" />
-              <p className="text-xl font-medium mb-2">Nenhum produto cadastrado</p>
-              <p className="text-muted-foreground mb-4">Crie seu primeiro produto para começar a vender</p>
-              <Button onClick={() => navigate("/dashboard/new-product")} className="bg-primary hover:bg-primary/90">
-                <Plus className="mr-2 h-4 w-4" />
-                Criar Produto
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <Card key={product.id} className="border-primary/20 hover:border-primary/40 transition-all hover:shadow-purple">
-                <CardHeader>
-                  <CardTitle>{product.name}</CardTitle>
-                  <CardDescription>
-                    {product.content_type.toUpperCase()} • R$ {product.price}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      product.is_active 
-                        ? "bg-success/10 text-success border border-success/20" 
-                        : "bg-muted text-muted-foreground"
-                    }`}>
-                      {product.is_active ? "Ativo" : "Inativo"}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 border-primary/20 hover:bg-primary/10"
-                      onClick={() => copyProductLink(product.id)}
-                    >
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copiar Link
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 border-primary/20 hover:bg-primary/10"
-                      onClick={() => navigate(`/dashboard/product/${product.id}`)}
-                    >
-                      Gerenciar
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-primary/20 hover:bg-primary/10"
-                      onClick={() => window.open(`/pay/${product.id}`, "_blank")}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Transações Recentes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 text-xs text-muted-foreground">
+              <div>Order ID</div>
+              <div>Método de Pagamento</div>
+              <div>Valor</div>
+              <div>Status</div>
+            </div>
+            <div className="h-24 flex items-center justify-center text-muted-foreground">Sem dados</div>
+          </CardContent>
+        </Card>
         </main>
       </SidebarInset>
     </SidebarProvider>
