@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, LogOut, Package, DollarSign, Settings, Copy, ExternalLink, Users } from "lucide-react";
+import { Plus, LogOut, Package, DollarSign, Settings, Copy, ExternalLink, Users, HelpCircle } from "lucide-react";
 import {
   SidebarProvider,
   Sidebar,
@@ -17,6 +17,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -49,6 +50,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly">("monthly");
   const [series, setSeries] = useState<{ date: string; value: number }[]>([]);
+  const [periodStats, setPeriodStats] = useState<{ sales: number; revenue: number }>({ sales: 0, revenue: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -106,8 +108,12 @@ const Dashboard = () => {
         totalRevenue,
         productsCount: productsData?.length || 0,
       });
-
-      setSeries(aggregateSeries(salesData || [], timeframe));
+      const filtered = filterByTimeframe(salesData || [], timeframe);
+      setPeriodStats({
+        sales: filtered.length,
+        revenue: filtered.reduce((sum, s) => sum + Number(s.amount), 0),
+      });
+      setSeries(aggregateSeries(filtered || [], timeframe));
     } catch (error: any) {
       toast.error("Erro ao carregar dados");
     } finally {
@@ -150,7 +156,21 @@ const Dashboard = () => {
           .select("amount,created_at")
           .eq("seller_id", user.id)
           .eq("payment_status", "approved");
-        setSeries(aggregateSeries(salesData || [], timeframe));
+        const filtered = filterByTimeframe(salesData || [], timeframe);
+        setSeries(aggregateSeries(filtered || [], timeframe));
+        const totalRevenue = (salesData || []).reduce((sum, s) => sum + Number(s.amount), 0);
+        const totalSales = (salesData || []).length;
+        try {
+          const { data: productsData } = await supabase
+            .from("products")
+            .select("id")
+            .eq("user_id", user.id);
+          setStats({ totalSales, totalRevenue, productsCount: productsData?.length || 0 });
+        } catch {}
+        setPeriodStats({
+          sales: filtered.length,
+          revenue: filtered.reduce((sum, s) => sum + Number(s.amount), 0),
+        });
       } catch (e) {}
     };
     refresh();
@@ -222,11 +242,11 @@ const Dashboard = () => {
         <div className="w-full bg-card/80 border-b border-border/50">
           <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="text-sm text-muted-foreground">R$ {stats.totalRevenue.toFixed(2)} / R$ 10,00K</div>
+              <div className="text-sm text-muted-foreground">R$ {periodStats.revenue.toFixed(2)} / R$ 10,00K</div>
               <div className="w-40 h-2 bg-muted rounded">
                 <div
-                  className="h-2 bg-primary rounded"
-                  style={{ width: `${Math.min((stats.totalRevenue / 10000) * 100, 100)}%` }}
+                  className="h-2 rounded"
+                  style={{ width: `${Math.min((periodStats.revenue / 10000) * 100, 100)}%`, backgroundColor: "#800080" }}
                 />
               </div>
             </div>
@@ -234,50 +254,53 @@ const Dashboard = () => {
           </div>
         </div>
         <main className="mx-auto max-w-6xl px-6 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Saldo Pix Disponível</CardTitle>
-              <DollarSign className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">R$ 0,00</div>
-              <p className="text-xs text-muted-foreground">Disponível para saque</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Saldo Crypto Disponível</CardTitle>
-              <DollarSign className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">R$ 0,00</div>
-              <p className="text-xs text-muted-foreground">Nesse Mês</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">PIX Gerados</CardTitle>
-              <Package className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Nesse Mês</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Volume Total</CardTitle>
-              <Package className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">R$ 0,00</div>
-              <p className="text-xs text-muted-foreground">Nesse Mês</p>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="bg-card mb-8">
+          <CardHeader>
+            <CardTitle className="text-sm">Resumo do Período</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TooltipProvider>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Vendas Realizadas</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent side="top">Total de vendas aprovadas. Período: {timeframe}.</TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <div className="text-2xl font-bold">{periodStats.sales}</div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Produtos Criados</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent side="top">Quantidade total de produtos. Unidade: itens.</TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <div className="text-2xl font-bold">{stats.productsCount}</div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Saldo Acumulado</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent side="top">Soma das vendas aprovadas. Período: {timeframe}. Unidade: R$.</TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <div className="text-2xl font-bold">R$ {periodStats.revenue.toFixed(2)}</div>
+                </div>
+              </div>
+            </TooltipProvider>
+          </CardContent>
+        </Card>
 
         <Card className="mb-8">
           <CardHeader className="flex justify-between items-center">
@@ -328,3 +351,14 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+  const filterByTimeframe = (
+    raw: { amount: number; created_at: string }[],
+    tf: "daily" | "weekly" | "monthly"
+  ) => {
+    const now = new Date();
+    const start = new Date(now);
+    if (tf === "daily") start.setDate(now.getDate() - 1);
+    else if (tf === "weekly") start.setDate(now.getDate() - 7);
+    else start.setDate(now.getDate() - 30);
+    return raw.filter((r) => new Date(r.created_at) >= start);
+  };
