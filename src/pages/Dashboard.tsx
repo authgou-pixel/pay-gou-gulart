@@ -4,7 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, LogOut, Package, DollarSign, Settings, Copy, ExternalLink } from "lucide-react";
+import { Plus, LogOut, Package, DollarSign, Settings, Copy, ExternalLink, Users } from "lucide-react";
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarInset,
+  SidebarContent,
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { toast } from "sonner";
 
 interface Product {
@@ -111,37 +121,42 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Minha Plataforma</h1>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/members")}
-              className="border-primary/20 hover:bg-primary/10"
-            >
-              Área de Membros
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/dashboard/settings")}
-              className="border-primary/20 hover:bg-primary/10"
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Configurações
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="border-border hover:bg-muted">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
-          </div>
-        </div>
-      </header>
+    <SidebarProvider>
+      <Sidebar side="right" variant="floating">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => navigate("/dashboard/settings")} size="lg">
+                  <Settings className="h-5 w-5" />
+                  <span>Configurações</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => navigate("/members")} size="lg">
+                  <Users className="h-5 w-5" />
+                  <span>Área de Membros</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout} size="lg">
+                  <LogOut className="h-5 w-5" />
+                  <span>Sair</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
 
-      <main className="container mx-auto px-4 py-8">
+      <SidebarInset className="bg-background">
+        <header className="border-b bg-card/50 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Minha Plataforma</h1>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="border-primary/20 bg-gradient-card shadow-purple">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -251,8 +266,9 @@ const Dashboard = () => {
             ))}
           </div>
         )}
-      </main>
-    </div>
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 
