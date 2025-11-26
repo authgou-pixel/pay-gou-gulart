@@ -10,7 +10,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="container mx-auto px-4 py-20 text-center text-primary-foreground">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
+        <div className="container mx-auto px-4 py-20 text-center text-primary-foreground relative">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
             Venda Produtos Digitais com PIX
           </h1>
@@ -21,7 +22,7 @@ const Index = () => {
             <Button 
               size="lg"
               onClick={() => navigate("/auth")}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              className="bg-white text-primary hover:bg-white/90 shadow-purple"
             >
               Começar Agora
             </Button>
@@ -29,7 +30,7 @@ const Index = () => {
               size="lg"
               variant="outline"
               onClick={() => navigate("/auth")}
-              className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+              className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
             >
               Fazer Login
             </Button>
@@ -38,15 +39,15 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Como Funciona
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card>
+            <Card className="border-primary/20 bg-gradient-card hover:shadow-purple transition-all">
               <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                   <Package className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Cadastre Produtos</CardTitle>
@@ -56,9 +57,9 @@ const Index = () => {
               </CardHeader>
             </Card>
 
-            <Card>
+            <Card className="border-primary/20 bg-gradient-card hover:shadow-purple transition-all">
               <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                   <QrCode className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Compartilhe o Link</CardTitle>
@@ -68,9 +69,9 @@ const Index = () => {
               </CardHeader>
             </Card>
 
-            <Card>
+            <Card className="border-primary/20 bg-gradient-card hover:shadow-purple transition-all">
               <CardHeader>
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-success/20 rounded-lg flex items-center justify-center mb-4">
                   <DollarSign className="h-6 w-6 text-success" />
                 </div>
                 <CardTitle>Receba Instantâneo</CardTitle>
@@ -84,7 +85,7 @@ const Index = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20">
+      <section className="py-20 bg-card/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Por Que Escolher Nossa Plataforma?
@@ -92,8 +93,8 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-success" />
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                  <Zap className="h-6 w-6 text-primary" />
                 </div>
               </div>
               <div>
@@ -106,8 +107,8 @@ const Index = () => {
 
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-                  <Shield className="h-6 w-6 text-success" />
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-primary" />
                 </div>
               </div>
               <div>
@@ -120,8 +121,8 @@ const Index = () => {
 
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-success" />
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
               </div>
               <div>
@@ -134,8 +135,8 @@ const Index = () => {
 
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
-                  <Package className="h-6 w-6 text-success" />
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                  <Package className="h-6 w-6 text-primary" />
                 </div>
               </div>
               <div>
@@ -150,8 +151,9 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-success">
-        <div className="container mx-auto px-4 text-center text-success-foreground">
+      <section className="py-20 bg-gradient-success relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-10"></div>
+        <div className="container mx-auto px-4 text-center text-primary-foreground relative">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Pronto para Começar a Vender?
           </h2>
@@ -161,7 +163,7 @@ const Index = () => {
           <Button 
             size="lg"
             onClick={() => navigate("/auth")}
-            className="bg-white text-success hover:bg-white/90"
+            className="bg-white text-primary hover:bg-white/90 shadow-purple"
           >
             Criar Conta Gratuita
           </Button>
@@ -169,7 +171,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 bg-card">
+      <footer className="border-t py-8 bg-card/50">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
           <p>© 2024 Plataforma de Vendas. Todos os direitos reservados.</p>
         </div>

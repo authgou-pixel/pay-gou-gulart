@@ -82,22 +82,22 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+      <header className="border-b bg-card/50 backdrop-blur-sm border-primary/20">
         <div className="container mx-auto px-4 py-4">
           <Button
             variant="ghost"
             onClick={() => navigate("/dashboard")}
-            className="mb-2"
+            className="mb-2 hover:bg-primary/10"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <h1 className="text-2xl font-bold text-primary">Configurações</h1>
+          <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Configurações</h1>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card>
+        <Card className="border-primary/20 shadow-purple">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Key className="h-5 w-5 text-primary" />
@@ -116,6 +116,7 @@ const Settings = () => {
                 placeholder="APP_USR-..."
                 value={accessToken}
                 onChange={(e) => setAccessToken(e.target.value)}
+                className="border-primary/20"
               />
               <p className="text-sm text-muted-foreground">
                 Você pode obter seu Access Token no{" "}
@@ -132,7 +133,7 @@ const Settings = () => {
 
             {hasConfig && (
               <div className="p-4 bg-success/10 border border-success/20 rounded-lg">
-                <p className="text-sm text-success-foreground">
+                <p className="text-sm text-success">
                   ✓ Mercado Pago configurado com sucesso
                 </p>
               </div>
@@ -140,7 +141,7 @@ const Settings = () => {
 
             <Button 
               onClick={handleSave} 
-              className="w-full"
+              className="w-full bg-gradient-hero hover:opacity-90 shadow-purple"
               disabled={loading || !accessToken || accessToken === "••••••••••••••••"}
             >
               {loading ? (
@@ -153,7 +154,7 @@ const Settings = () => {
               )}
             </Button>
 
-            <div className="pt-4 border-t">
+            <div className="pt-4 border-t border-primary/20">
               <h3 className="font-medium mb-2">Como funciona?</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                 <li>Configure seu Access Token do Mercado Pago</li>
