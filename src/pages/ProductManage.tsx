@@ -50,15 +50,19 @@ const ProductManage = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          setLoading(false);
+          navigate("/auth");
+          return;
+        }
+        await Promise.all([loadProduct(), loadModules(), loadLessons()]);
+      } catch {
+        toast.error("Erro ao inicializar");
+      } finally {
+        setLoading(false);
       }
-      await loadProduct();
-      await loadModules();
-      await loadLessons();
-      setLoading(false);
     };
     checkAuth();
   }, [navigate, productId]);
