@@ -33,6 +33,7 @@ const Members = () => {
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [products, setProducts] = useState<Record<string, Product>>({});
   const [lessons, setLessons] = useState<Record<string, Lesson[]>>({});
+  const [buyerEmail, setBuyerEmail] = useState<string>("");
 
   useEffect(() => {
     const init = async () => {
@@ -42,6 +43,7 @@ const Members = () => {
         return;
       }
       const email = session.user.email as string;
+      setBuyerEmail(email);
       const userId = session.user.id;
 
       const { data: msData, error: msError } = await supabase
@@ -139,9 +141,29 @@ const Members = () => {
                           <a href={p.content_url} target="_blank" rel="noreferrer">Abrir Conteúdo ({p.content_type.toUpperCase()})</a>
                         </Button>
                       ) : (
-                        <Button className="mt-4" variant="outline" disabled>
-                          Aguardando aprovação do pagamento
-                        </Button>
+                        <div className="mt-4 flex gap-2">
+                          <Button variant="outline" disabled>
+                            Aguardando aprovação do pagamento
+                          </Button>
+                          <Button variant="outline" onClick={async () => {
+                            try {
+                              const resp = await fetch('/api/refresh-membership', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ productId: m.product_id, buyerEmail }),
+                              });
+                              const data = await resp.json();
+                              if (resp.ok && data?.status) {
+                                setMemberships(prev => prev.map(x => x.product_id === m.product_id ? { ...x, status: data.status } : x));
+                                if (data.status === 'approved') toast.success('Pagamento aprovado'); else toast.info(`Status: ${data.status}`);
+                              } else {
+                                toast.error(data?.error || 'Erro ao atualizar status');
+                              }
+                            } catch {
+                              toast.error('Erro ao atualizar status');
+                            }
+                          }}>Atualizar status</Button>
+                        </div>
                       )
                     )}
                   </CardContent>
