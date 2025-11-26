@@ -126,14 +126,14 @@ const Dashboard = () => {
       <Sidebar side="left" variant="floating">
         <SidebarContent>
           <SidebarHeader>
-            <a href="/" className="flex w-full items-center justify-center">
+            <a href="/" className="flex w-full items-center justify-start pl-3 md:pl-4">
               <img
                 src="https://i.imgur.com/TYyds7y.png"
                 alt="Logo"
                 loading="lazy"
                 decoding="async"
                 fetchPriority="low"
-                className="h-auto w-[72%] max-w-[10.8rem] object-contain"
+                className="h-auto w-[88%] max-w-[13rem] object-contain"
               />
             </a>
           </SidebarHeader>
