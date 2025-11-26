@@ -32,6 +32,10 @@ const ProductManage = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
   const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState<string>("");
+  const [productPrice, setProductPrice] = useState<string>("");
+  const [productImageUrl, setProductImageUrl] = useState<string>("");
+  const [productActive, setProductActive] = useState<boolean>(true);
   const [modules, setModules] = useState<Module[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +65,7 @@ const ProductManage = () => {
   const loadProduct = async () => {
     const { data, error } = await supabase
       .from("products")
-      .select("name")
+      .select("*")
       .eq("id", productId)
       .single();
     if (error) {
@@ -70,6 +74,41 @@ const ProductManage = () => {
       return;
     }
     setProductName(data.name);
+    setProductDescription(data.description ?? "");
+    setProductPrice(String(data.price ?? ""));
+    setProductActive(Boolean(data.is_active ?? true));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore coluna opcional enquanto schema não tem image_url tipada
+    setProductImageUrl(data.image_url ?? "");
+  };
+
+  const saveProduct = async () => {
+    const payload: Record<string, unknown> = {
+      name: productName,
+      description: productDescription || null,
+      price: parseFloat(productPrice || "0"),
+      is_active: productActive,
+    };
+    if (productImageUrl) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore coluna opcional
+      payload.image_url = productImageUrl;
+    }
+    let { error } = await supabase
+      .from("products")
+      .update(payload)
+      .eq("id", productId as string);
+    if (error && String(error.message).toLowerCase().includes("image_url")) {
+      const { image_url, ...rest } = payload as any;
+      const retry = await supabase.from("products").update(rest).eq("id", productId as string);
+      error = retry.error;
+      if (!error) toast.info("Imagem não salva — adicione a coluna image_url no Supabase");
+    }
+    if (error) {
+      toast.error(error.message || "Erro ao salvar produto");
+      return;
+    }
+    toast.success("Produto atualizado");
   };
 
   const loadModules = async () => {
@@ -206,7 +245,34 @@ const ProductManage = () => {
 
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-4">Gerenciar Produto</h1>
-        <p className="text-muted-foreground mb-8">{productName}</p>
+        <Card className="border-primary/20 mb-8">
+          <CardHeader>
+            <CardTitle>Editar Produto</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Nome</Label>
+              <Input value={productName} onChange={(e) => setProductName(e.target.value)} />
+            </div>
+            <div>
+              <Label>Descrição</Label>
+              <Textarea value={productDescription} onChange={(e) => setProductDescription(e.target.value)} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label>Preço (R$)</Label>
+                <Input type="number" step="0.01" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} />
+              </div>
+              <div className="md:col-span-2">
+                <Label>Imagem (246×246)</Label>
+                <Input value={productImageUrl} onChange={(e) => setProductImageUrl(e.target.value)} placeholder="https://..." />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={saveProduct} className="bg-primary">Salvar</Button>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="border-primary/20 mb-8">
           <CardHeader>

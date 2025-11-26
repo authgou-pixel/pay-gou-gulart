@@ -17,7 +17,7 @@ const NewProduct = () => {
     name: "",
     description: "",
     price: "",
-    content_type: "pdf",
+    content_type: "none",
     content_url: "",
     image_url: "",
   });
@@ -150,46 +150,7 @@ const NewProduct = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="content_type">Tipo de Conteúdo *</Label>
-                <Select
-                  value={formData.content_type}
-                  onValueChange={(value) => setFormData({ ...formData, content_type: value })}
-                >
-                  <SelectTrigger className="border-primary/20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pdf">PDF / E-book</SelectItem>
-                    <SelectItem value="video">Vídeo (YouTube)</SelectItem>
-                    <SelectItem value="ebook">E-book</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="content_url">
-                  {formData.content_type === "video" ? "Link do YouTube *" : "Link do Arquivo *"}
-                </Label>
-                <Input
-                  id="content_url"
-                  type="url"
-                  placeholder={
-                    formData.content_type === "video"
-                      ? "https://youtube.com/watch?v=..."
-                      : "https://..."
-                  }
-                  value={formData.content_url}
-                  onChange={(e) => setFormData({ ...formData, content_url: e.target.value })}
-                  required
-                  className="border-primary/20"
-                />
-                <p className="text-sm text-muted-foreground">
-                  {formData.content_type === "video"
-                    ? "Cole o link completo do vídeo do YouTube"
-                    : "Cole o link onde o arquivo está hospedado"}
-                </p>
-              </div>
+              
 
               <div className="space-y-2">
                 <Label htmlFor="image_url">Imagem do Produto (246×246)</Label>
