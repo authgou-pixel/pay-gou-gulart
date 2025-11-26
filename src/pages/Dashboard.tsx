@@ -122,7 +122,7 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider>
-      <Sidebar side="right" variant="floating">
+      <Sidebar side="left" variant="floating">
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
