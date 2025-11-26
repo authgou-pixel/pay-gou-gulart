@@ -24,9 +24,8 @@ const PaymentPage = () => {
   const [buyerName, setBuyerName] = useState("");
   const [showPayment, setShowPayment] = useState(false);
   const [copied, setCopied] = useState(false);
-  
-  // Simulação de código PIX (em produção viria do Mercado Pago)
-  const pixCode = "00020126580014br.gov.bcb.pix0136a629532e-7693-4846-852d-1bbff6b2f8b520400005303986540510.005802BR5913Loja Virtual6009Sao Paulo62410503***50300017br.gov.bcb.brcode01051.0.063043D5C";
+  const [qrCode, setQrCode] = useState<string>("");
+  const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
 
   useEffect(() => {
     loadProduct();
@@ -56,29 +55,31 @@ const PaymentPage = () => {
       return;
     }
 
-    // Aqui em produção seria chamada a API do Mercado Pago
-    // Por enquanto apenas simulamos
     try {
-      const { error } = await supabase.from("sales").insert({
-        product_id: product!.id,
-        seller_id: product!.user_id,
-        buyer_email: buyerEmail,
-        buyer_name: buyerName,
-        amount: product!.price,
-        payment_status: "pending",
+      const resp = await fetch("/api/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product!.id,
+          buyerEmail,
+          buyerName,
+        }),
       });
 
-      if (error) throw error;
-      
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data?.error || "Erro ao gerar pagamento");
+
+      setQrCode(data.qr_code || "");
+      setQrCodeBase64(data.qr_code_base64 || "");
       setShowPayment(true);
       toast.success("Pagamento gerado! Escaneie o QR Code ou copie o código PIX");
     } catch (error: any) {
-      toast.error("Erro ao gerar pagamento");
+      toast.error(error.message || "Erro ao gerar pagamento");
     }
   };
 
   const copyPixCode = () => {
-    navigator.clipboard.writeText(pixCode);
+    navigator.clipboard.writeText(qrCode);
     setCopied(true);
     toast.success("Código PIX copiado!");
     setTimeout(() => setCopied(false), 2000);
@@ -163,22 +164,24 @@ const PaymentPage = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="bg-white p-6 rounded-lg flex items-center justify-center">
-                <div className="w-64 h-64 bg-muted flex items-center justify-center rounded-lg">
-                  <QrCode className="h-32 w-32 text-muted-foreground" />
-                  <p className="text-xs text-muted-foreground absolute mt-48">
-                    QR Code PIX
-                  </p>
-                </div>
+                {qrCodeBase64 ? (
+                  <img
+                    src={`data:image/png;base64,${qrCodeBase64}`}
+                    alt="QR Code PIX"
+                    className="w-64 h-64 rounded-lg"
+                  />
+                ) : (
+                  <div className="w-64 h-64 bg-muted flex items-center justify-center rounded-lg">
+                    <QrCode className="h-32 w-32 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground absolute mt-48">QR Code PIX</p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label>Código PIX</Label>
                 <div className="flex gap-2">
-                  <Input
-                    value={pixCode}
-                    readOnly
-                    className="font-mono text-xs border-primary/20"
-                  />
+                  <Input value={qrCode} readOnly className="font-mono text-xs border-primary/20" />
                   <Button
                     variant="outline"
                     size="icon"
