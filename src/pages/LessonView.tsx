@@ -57,6 +57,38 @@ const LessonView = () => {
 
   const moduleLessons = lessons.filter(x => x.module_id === lesson.module_id);
 
+  const normalizeVideo = (url: string) => {
+    if (!url) return null as null | { kind: "iframe" | "video"; src: string };
+    try {
+      const u = new URL(url);
+      const host = u.hostname.toLowerCase();
+      if (host.includes("youtube.com")) {
+        const id = u.searchParams.get("v");
+        if (id) return { kind: "iframe", src: `https://www.youtube.com/embed/${id}` };
+      }
+      if (host.includes("youtu.be")) {
+        const id = u.pathname.replace("/", "");
+        if (id) return { kind: "iframe", src: `https://www.youtube.com/embed/${id}` };
+      }
+      if (host.includes("vimeo.com")) {
+        const id = u.pathname.split("/").filter(Boolean)[0];
+        if (id) return { kind: "iframe", src: `https://player.vimeo.com/video/${id}` };
+      }
+      if (host.includes("drive.google.com") && u.pathname.includes("/file/d/")) {
+        const parts = u.pathname.split("/");
+        const idx = parts.indexOf("d");
+        const id = idx >= 0 ? parts[idx + 1] : "";
+        if (id) return { kind: "iframe", src: `https://drive.google.com/file/d/${id}/preview` };
+      }
+      if (/[.]mp4($|[?])/i.test(url) || /[.]webm($|[?])/i.test(url) || /[.]ogg($|[?])/i.test(url)) {
+        return { kind: "video", src: url };
+      }
+      return { kind: "iframe", src: url };
+    } catch {
+      return { kind: "iframe", src: url };
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -67,9 +99,22 @@ const LessonView = () => {
             </CardHeader>
             <CardContent>
               {lesson.content_type === "video" && lesson.content_url ? (
-                <div className="aspect-video w-full bg-black">
-                  <iframe title={lesson.title} src={lesson.content_url} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                </div>
+                (() => {
+                  const embed = normalizeVideo(lesson.content_url);
+                  if (!embed) return <p className="text-muted-foreground">Sem conteúdo associado.</p>;
+                  if (embed.kind === "video") {
+                    return (
+                      <div className="w-full">
+                        <video src={embed.src} controls className="w-full h-auto" />
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="aspect-video w-full bg-black">
+                      <iframe title={lesson.title} src={embed.src} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                    </div>
+                  );
+                })()
               ) : lesson.content_type === "pdf" && lesson.content_url ? (
                 <div className="w-full h-[70vh]">
                   <iframe title={lesson.title} src={lesson.content_url} className="w-full h-full"></iframe>
