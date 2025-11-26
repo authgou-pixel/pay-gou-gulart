@@ -254,53 +254,46 @@ const Dashboard = () => {
           </div>
         </div>
         <main className="mx-auto max-w-6xl px-6 py-6">
-        <Card className="bg-card mb-8">
-          <CardHeader>
-            <CardTitle className="text-sm">Resumo do Período</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TooltipProvider>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Vendas Realizadas</span>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Total de vendas aprovadas. Período: {timeframe}.</TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="text-2xl font-bold">{periodStats.sales}</div>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Produtos Criados</span>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Quantidade total de produtos. Unidade: itens.</TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="text-2xl font-bold">{stats.productsCount}</div>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Saldo Acumulado</span>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Soma das vendas aprovadas. Período: {timeframe}. Unidade: R$.</TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="text-2xl font-bold">R$ {periodStats.revenue.toFixed(2)}</div>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-card border rounded-xl">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold">Vendas Realizadas</CardTitle>
+                <HelpCircle className="h-4 w-4 text-[#800080]" />
               </div>
-            </TooltipProvider>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{periodStats.sales}</div>
+              <p className="text-xs text-muted-foreground">Período: {timeframe}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border rounded-xl">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold">Produtos Criados</CardTitle>
+                <Package className="h-4 w-4 text-[#800080]" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.productsCount}</div>
+              <p className="text-xs text-muted-foreground">Unidade: itens</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border rounded-xl">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold">Saldo Acumulado</CardTitle>
+                <DollarSign className="h-4 w-4 text-[#800080]" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">R$ {periodStats.revenue.toFixed(2)}</div>
+              <p className="text-xs text-muted-foreground">Período: {timeframe}</p>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card className="mb-8">
           <CardHeader className="flex justify-between items-center">
