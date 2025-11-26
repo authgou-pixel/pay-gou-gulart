@@ -99,3 +99,24 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  [data-variant="floating"] [data-sidebar="sidebar"] {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  [data-sidebar="menu-button"] span:last-child {
+    font-size: 14px;
+    line-height: 1.25rem;
+  }
+
+  [data-sidebar="menu-button"],
+  [data-sidebar="group"],
+  [data-sidebar="content"],
+  [data-sidebar="header"],
+  [data-sidebar="separator"] {
+    border: none !important;
+  }
+}
