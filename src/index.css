@@ -102,7 +102,7 @@ All colors MUST be HSL.
 
 @layer components {
   [data-variant="floating"] [data-sidebar="sidebar"] {
-    border-right: 1px solid #CCCCCC !important;
+    border-right: 1px solid hsl(0 0% 75% / 0.8) !important;
     box-shadow: none !important;
     outline: none !important;
   }
@@ -112,7 +112,7 @@ All colors MUST be HSL.
     line-height: 1.45rem;
     font-weight: 600;
     text-align: left;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
 
   [data-sidebar="menu-button"] {
