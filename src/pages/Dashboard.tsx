@@ -39,6 +39,14 @@ interface Stats {
   productsCount: number;
 }
 
+interface Sale {
+  id: string;
+  amount: number;
+  payment_status: string;
+  payment_method?: string;
+  created_at: string;
+}
+
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -47,6 +55,7 @@ const Dashboard = () => {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly">("monthly");
   const [series, setSeries] = useState<{ date: string; value: number }[]>([]);
   const [periodStats, setPeriodStats] = useState<{ sales: number; revenue: number }>({ sales: 0, revenue: 0 });
+  const [recentSales, setRecentSales] = useState<Sale[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,7 +99,7 @@ const Dashboard = () => {
       // Load sales stats
       const { data: salesData, error: salesError } = await supabase
         .from("sales")
-        .select("amount,created_at")
+        .select("id,amount,created_at,payment_status,payment_method")
         .eq("seller_id", userId)
         .eq("payment_status", "approved");
 
@@ -104,12 +113,17 @@ const Dashboard = () => {
         totalRevenue,
         productsCount: productsData?.length || 0,
       });
-      const filtered = filterByTimeframe(salesData || [], timeframe);
+      const filtered = filterByTimeframe((salesData || []) as any, timeframe);
       setPeriodStats({
         sales: filtered.length,
         revenue: filtered.reduce((sum, s) => sum + Number(s.amount), 0),
       });
       setSeries(aggregateSeries(filtered || [], timeframe));
+      setRecentSales(
+        (salesData || [])
+          .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 10) as Sale[]
+      );
     } catch (error: any) {
       toast.error("Erro ao carregar dados");
     } finally {
@@ -149,10 +163,10 @@ const Dashboard = () => {
       try {
         const { data: salesData } = await supabase
           .from("sales")
-          .select("amount,created_at")
+          .select("id,amount,created_at,payment_status,payment_method")
           .eq("seller_id", user.id)
           .eq("payment_status", "approved");
-        const filtered = filterByTimeframe(salesData || [], timeframe);
+        const filtered = filterByTimeframe((salesData || []) as any, timeframe);
         setSeries(aggregateSeries(filtered || [], timeframe));
         const totalRevenue = (salesData || []).reduce((sum, s) => sum + Number(s.amount), 0);
         const totalSales = (salesData || []).length;
@@ -167,6 +181,11 @@ const Dashboard = () => {
           sales: filtered.length,
           revenue: filtered.reduce((sum, s) => sum + Number(s.amount), 0),
         });
+        setRecentSales(
+          (salesData || [])
+            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .slice(0, 10) as Sale[]
+        );
       } catch (e) {}
     };
     refresh();
@@ -302,20 +321,35 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Transações Recentes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-4 text-xs text-muted-foreground">
-              <div>Order ID</div>
-              <div>Método de Pagamento</div>
-              <div>Valor</div>
-              <div>Status</div>
-            </div>
-            <div className="h-24 flex items-center justify-center text-muted-foreground">Sem dados</div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Transações Recentes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-4 text-xs text-muted-foreground">
+                <div>Order ID</div>
+                <div>Método de Pagamento</div>
+                <div>Valor</div>
+                <div>Status</div>
+              </div>
+              {recentSales.length === 0 ? (
+                <div className="h-24 flex items-center justify-center text-muted-foreground">Sem dados</div>
+              ) : (
+                <div className="mt-2 divide-y">
+                  {recentSales.map((s) => (
+                    <div key={s.id} className="grid grid-cols-4 py-2 text-sm">
+                      <div className="truncate">{s.id}</div>
+                      <div className="truncate">{s.payment_method || "PIX"}</div>
+                      <div>R$ {Number(s.amount).toFixed(2)}</div>
+                      <div className={s.payment_status === "approved" ? "text-success" : "text-muted-foreground"}>
+                        {s.payment_status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
       </main>
     </div>
   );
