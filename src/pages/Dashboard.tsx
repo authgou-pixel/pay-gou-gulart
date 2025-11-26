@@ -14,15 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { aggregateSeries, filterByTimeframe, Timeframe } from "@/utils/dashboard";
 
 interface Product {
   id: string;
@@ -52,10 +45,14 @@ const Dashboard = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [stats, setStats] = useState<Stats>({ totalSales: 0, totalRevenue: 0, productsCount: 0 });
   const [loading, setLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly">("monthly");
+  const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
   const [series, setSeries] = useState<{ date: string; value: number }[]>([]);
   const [periodStats, setPeriodStats] = useState<{ sales: number; revenue: number }>({ sales: 0, revenue: 0 });
   const [recentSales, setRecentSales] = useState<Sale[]>([]);
+  const [chartLoading, setChartLoading] = useState(false);
+  const [txnRange, setTxnRange] = useState<"7d" | "30d" | "all">("7d");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -161,6 +158,7 @@ const Dashboard = () => {
     if (!user) return;
     const refresh = async () => {
       try {
+        setChartLoading(true);
         const { data: salesData } = await supabase
           .from("sales")
           .select("id,amount,created_at,payment_status,payment_method")
@@ -186,6 +184,7 @@ const Dashboard = () => {
             .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
             .slice(0, 10) as Sale[]
         );
+        setChartLoading(false);
       } catch (e) {}
     };
     refresh();
@@ -303,51 +302,65 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={series} margin={{ left: 0, right: 0, top: 10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="revGradient" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.7} />
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="date" tick={{ fill: "hsl(var(--muted-foreground))" }} />
-                <YAxis tick={{ fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip />
-                <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="url(#revGradient)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {chartLoading ? (
+              <div className="h-full w-full animate-pulse rounded bg-muted" />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={series} margin={{ left: 0, right: 0, top: 10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="revGradient" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.7} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="date" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                  <YAxis tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="url(#revGradient)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">Transações Recentes</CardTitle>
+              <div className="mt-2 flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => { setTxnRange("7d"); setPage(1); }}>7 dias</Button>
+                <Button variant="outline" size="sm" onClick={() => { setTxnRange("30d"); setPage(1); }}>30 dias</Button>
+                <Button variant="outline" size="sm" onClick={() => { setTxnRange("all"); setPage(1); }}>Tudo</Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-4 text-xs text-muted-foreground">
-                <div>Order ID</div>
-                <div>Método de Pagamento</div>
+              <div className="grid grid-cols-5 text-xs text-muted-foreground">
+                <div>Data</div>
+                <div>Produto</div>
+                <div>Cliente</div>
                 <div>Valor</div>
                 <div>Status</div>
               </div>
-              {recentSales.length === 0 ? (
+              {filteredRecent.rows.length === 0 ? (
                 <div className="h-24 flex items-center justify-center text-muted-foreground">Sem dados</div>
               ) : (
                 <div className="mt-2 divide-y">
-                  {recentSales.map((s) => (
-                    <div key={s.id} className="grid grid-cols-4 py-2 text-sm">
-                      <div className="truncate">{s.id}</div>
-                      <div className="truncate">{s.payment_method || "PIX"}</div>
+                  {filteredRecent.rows.map((s) => (
+                    <div key={s.id} className="grid grid-cols-5 py-2 text-sm">
+                      <div>{new Date(s.created_at).toLocaleString()}</div>
+                      <div className="truncate">{(s as any).product_name || (s as any).product_title || (s as any).product || "-"}</div>
+                      <div className="truncate">{(s as any).customer_name || (s as any).buyer_name || (s as any).client || "-"}</div>
                       <div>R$ {Number(s.amount).toFixed(2)}</div>
-                      <div className={s.payment_status === "approved" ? "text-success" : "text-muted-foreground"}>
-                        {s.payment_status}
-                      </div>
+                      <div className={s.payment_status === "approved" ? "text-success" : "text-muted-foreground"}>{s.payment_status}</div>
                     </div>
                   ))}
                 </div>
               )}
+              <div className="mt-3 flex items-center justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))}>Anterior</Button>
+                <div className="text-xs text-muted-foreground">Página {page} de {filteredRecent.totalPages}</div>
+                <Button variant="outline" size="sm" onClick={() => setPage((p) => p + 1)}>Próxima</Button>
+              </div>
             </CardContent>
           </Card>
       </main>
@@ -367,3 +380,42 @@ export default Dashboard;
     else start.setDate(now.getDate() - 30);
     return raw.filter((r) => new Date(r.created_at) >= start);
   };
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const channel = supabase
+        .channel("sales-changes")
+        .on("postgres_changes", { event: "*", schema: "public", table: "sales" }, async () => {
+          try {
+            const { data } = await supabase
+              .from("sales")
+              .select("id,amount,created_at,payment_status,payment_method")
+              .eq("seller_id", user.id)
+              .eq("payment_status", "approved");
+            const filtered = filterByTimeframe((data || []) as any, timeframe);
+            setSeries(aggregateSeries(filtered || [], timeframe));
+            setRecentSales(
+              (data || [])
+                .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                .slice(0, 10) as Sale[]
+            );
+          } catch {}
+        })
+        .subscribe();
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } catch {}
+  }, [user, timeframe]);
+
+  const filteredRecent = useMemo(() => {
+    const now = new Date();
+    let start = new Date(0);
+    if (txnRange === "7d") start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    else if (txnRange === "30d") start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const data = recentSales.filter((r) => new Date(r.created_at) >= start);
+    const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+    const safePage = Math.min(page, totalPages);
+    const startIdx = (safePage - 1) * pageSize;
+    return { rows: data.slice(startIdx, startIdx + pageSize), totalPages };
+  }, [recentSales, txnRange, page]);
