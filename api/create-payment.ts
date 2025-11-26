@@ -47,6 +47,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const idempotencyKey = randomUUID();
 
+    const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "";
+    const baseUrl = process.env.WEBHOOK_BASE_URL || vercelUrl || "";
+    const notificationUrl = baseUrl ? `${baseUrl}/api/mp-webhook` : undefined;
+
     const mpResp = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
       headers: {
@@ -63,6 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           first_name: buyerName,
         },
         external_reference: `${product.id}-${buyerEmail}`,
+        notification_url: notificationUrl,
       }),
     });
 
