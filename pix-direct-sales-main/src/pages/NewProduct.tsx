@@ -17,7 +17,7 @@ const NewProduct = () => {
     name: "",
     description: "",
     price: "",
-    content_type: "none",
+    content_type: "ebook",
     content_url: "",
     image_url: "",
   });
@@ -54,6 +54,16 @@ const NewProduct = () => {
       const expired = sub?.expires_at ? new Date(sub.expires_at) <= new Date() : true;
       if (!sub || sub.status !== "active" || expired) {
         toast.info("Criação de produtos requer assinatura. Vá em Upgrade para assinar.");
+        return;
+      }
+
+      if (!["ebook","pdf","video"].includes(formData.content_type)) {
+        toast.error("Formato inválido. Selecione e‑book, PDF ou vídeo.");
+        return;
+      }
+
+      if (!formData.content_url.trim()) {
+        toast.error("Informe a URL do conteúdo");
         return;
       }
 
@@ -164,7 +174,37 @@ const NewProduct = () => {
                 />
               </div>
 
-              
+              <div className="space-y-2">
+                <Label>Formato do Conteúdo *</Label>
+                <Select
+                  value={formData.content_type}
+                  onValueChange={(v) => setFormData({ ...formData, content_type: v })}
+                >
+                  <SelectTrigger className="border-primary/20">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ebook">E‑book</SelectItem>
+                    <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectItem value="video">Vídeo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content_url">URL do Conteúdo *</Label>
+                <Input
+                  id="content_url"
+                  type="url"
+                  placeholder="https://.../seu-conteudo"
+                  value={formData.content_url}
+                  onChange={(e) => setFormData({ ...formData, content_url: e.target.value })}
+                  required
+                  className="border-primary/20"
+                />
+                <p className="text-sm text-muted-foreground">Informe a URL pública do conteúdo (ex.: link para o arquivo ou vídeo).</p>
+              </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="image_url">Imagem do Produto (246×246)</Label>
