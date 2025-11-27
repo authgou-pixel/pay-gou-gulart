@@ -35,6 +35,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./pix-direct-sales-main/dist
+      - name: Add SPA 404 fallback
+        run: cp ./pix-direct-sales-main/dist/index.html ./pix-direct-sales-main/dist/404.html
 
   deploy:
     runs-on: ubuntu-latest
