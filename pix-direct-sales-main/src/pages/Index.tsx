@@ -7,7 +7,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#1A1A1A] text-white">
+    <div className="min-h-screen bg-[#1A1A1A] text-white overflow-x-hidden">
       <header className="w-full sticky top-0 z-40 border-b border-[#8A2BE2]/30 bg-[#1A1A1A]/90 backdrop-blur">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -28,7 +28,7 @@ const Index = () => {
       </header>
 
       <main>
-        <section className="relative overflow-visible py-28">
+        <section className="relative overflow-hidden pt-24 md:pt-28 pb-12 md:pb-16">
           <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[#8A2BE2]/20 blur-[100px] z-0"></div>
           <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#5E2DBE]/20 blur-[100px] z-0"></div>
           <div className="absolute inset-0 glass-hero z-10"></div>
@@ -40,11 +40,11 @@ const Index = () => {
               loading="lazy"
               referrerPolicy="no-referrer"
             />
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-10 leading-[1.15] md:leading-[1.15]">
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-[1.15] md:leading-[1.15]">
               <span className="block bg-gradient-to-r from-white to-[#C6A3FF] bg-clip-text text-transparent pb-1">Plataforma completa para venda de produtos digitais</span>
             </h1>
-            <p className="text-lg md:text-xl text-[#CFCFCF] mb-10 max-w-3xl mx-auto">Alta conversão e operação sem bloqueios. Aprovação automática, saque rápido e integração direta.</p>
-            <div className="mt-10 flex justify-center relative z-20">
+            <p className="text-lg md:text-xl text-[#CFCFCF] mb-6 max-w-3xl mx-auto">Alta conversão e operação sem bloqueios. Aprovação automática, saque rápido e integração direta.</p>
+            <div className="mt-6 flex justify-center relative z-20">
               <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-4xl h-auto rounded-xl" loading="lazy" referrerPolicy="no-referrer" />
             </div>
           </div>

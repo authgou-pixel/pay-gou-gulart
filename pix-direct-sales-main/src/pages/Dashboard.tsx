@@ -8,7 +8,7 @@ import { DollarSign, Package, HelpCircle, LogOut, CreditCard, Settings as Settin
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import { filterByTimeframe, Timeframe, aggregateSeries } from "@/utils/dashboard";
 import { getCurrentSubscription, isSubscriptionActive, markExpiredIfNeeded } from "@/utils/subscription";
 
@@ -187,19 +187,7 @@ const Dashboard = () => {
   const handleGoToSales = () => {
     salesSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
-  const pieColors = [
-    "#4D96FF",
-    "#FFD93D",
-    "#6BCB77",
-    "#FF6B6B",
-    "#845EC2",
-    "#00F5D4",
-    "#F15BB5",
-    "#FF9671",
-    "#2DBAE6",
-    "#FFC75F",
-  ];
+  const pieColor = "#8A2BE2";
 
   if (loading) {
     return (
@@ -210,7 +198,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <div className="w-full bg-card/80 border-b border-border/50">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -251,7 +239,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <main className="mx-auto max-w-6xl px-6 py-6 pl-[300px]">
+      <main className="mx-auto max-w-6xl px-4 md:px-6 py-6 md:pl-[300px]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="bg-card border rounded-xl">
             <CardHeader className="pb-2">
@@ -302,27 +290,25 @@ const Dashboard = () => {
               <Button variant="outline" size="sm" onClick={() => setTimeframe("monthly")}>Mensal</Button>
             </div>
           </CardHeader>
-          <CardContent className="h-64">
+          <CardContent className="h-64 flex items-center justify-center">
             {chartLoading ? (
               <div className="h-full w-full animate-pulse rounded bg-muted" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip formatter={(value, name) => [Number(value), name]} />
-                  <Legend iconType="circle" iconSize={10} verticalAlign="bottom" />
                   <Pie
                     data={series.map((s) => ({ name: s.date, value: s.value }))}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={110}
+                    innerRadius={70}
+                    outerRadius={115}
                     labelLine={false}
-                    label={(d) => `${d.name}: ${d.value}`}
                   >
                     {series.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                      <Cell key={`cell-${index}`} fill={pieColor} stroke="#ffffff20" />
                     ))}
                   </Pie>
                 </PieChart>
@@ -364,7 +350,7 @@ const Dashboard = () => {
         </Card>
         </div>
       </main>
-      <aside className="fixed left-0 top-0 h-screen w-[250px] bg-card border-r border-border/50 p-4 flex flex-col gap-3">
+      <aside className="hidden md:flex fixed left-0 top-0 h-screen w-[250px] bg-card border-r border-border/50 p-4 flex-col gap-3">
         <div className="text-sm font-semibold text-muted-foreground mb-1">Navegação</div>
         <Button variant="outline" className="justify-start gap-2" onClick={() => navigate("/dashboard")}>
           <Package className="h-4 w-4" /> Produtos
