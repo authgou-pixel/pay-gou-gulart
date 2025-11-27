@@ -50,6 +50,12 @@ const Index = () => {
                   <CardTitle>Checkout customizável</CardTitle>
                   <CardDescription>Estilos, cores e elementos ajustáveis para sua oferta.</CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
+                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-[#8A2BE2]" /> Temas e branding completos</div>
+                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Experiência fluida e segura</div>
+                  </div>
+                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
@@ -58,6 +64,12 @@ const Index = () => {
                   <CardTitle>Aprovação instantânea</CardTitle>
                   <CardDescription>Produtos liberados sem fricção e sem bloqueios.</CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
+                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-[#8A2BE2]" /> Publicação imediata</div>
+                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Monitoramento automático</div>
+                  </div>
+                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
@@ -66,6 +78,12 @@ const Index = () => {
                   <CardTitle>Área de membros premium</CardTitle>
                   <CardDescription>Experiência estilo streaming para seus conteúdos.</CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
+                    <div className="flex items-center gap-2"><Library className="h-4 w-4 text-[#8A2BE2]" /> Biblioteca organizada</div>
+                    <div className="flex items-center gap-2"><Download className="h-4 w-4 text-[#8A2BE2]" /> Downloads controlados</div>
+                  </div>
+                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
@@ -74,6 +92,12 @@ const Index = () => {
                   <CardTitle>Afiliação e coprodução</CardTitle>
                   <CardDescription>Parcerias e marketplace para escalar vendas.</CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
+                    <div className="flex items-center gap-2"><Users className="h-4 w-4 text-[#8A2BE2]" /> Redes de afiliados</div>
+                    <div className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-[#8A2BE2]" /> Split de receita</div>
+                  </div>
+                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
@@ -82,6 +106,12 @@ const Index = () => {
                   <CardTitle>Sem bloqueios</CardTitle>
                   <CardDescription>Operação transparente e segura para qualquer produto.</CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
+                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> PIX direto D+0</div>
+                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Saldo sem retenção</div>
+                  </div>
+                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
@@ -90,6 +120,12 @@ const Index = () => {
                   <CardTitle>Recuperação de vendas</CardTitle>
                   <CardDescription>Estratégias para retomar carrinhos abandonados.</CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
+                    <div className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-[#8A2BE2]" /> Follow-up automatizado</div>
+                    <div className="flex items-center gap-2"><QrCode className="h-4 w-4 text-[#8A2BE2]" /> Links de retorno</div>
+                  </div>
+                </CardContent>
               </Card>
             </div>
           </div>
