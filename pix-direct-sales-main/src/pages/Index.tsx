@@ -43,8 +43,8 @@ const Index = () => {
         <section className="py-16">
           <div className="mx-auto max-w-6xl px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Diferenciais</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl md:col-span-2">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><ArrowRightLeft className="h-6 w-6 text-[#8A2BE2]" /></div>
                   <CardTitle>Integração Bancária Direta</CardTitle>
@@ -58,7 +58,7 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl md:col-span-2">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><CheckCircle className="h-6 w-6 text-[#8A2BE2]" /></div>
                   <CardTitle>Recebimento Instantâneo</CardTitle>
@@ -72,7 +72,7 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl md:col-span-2">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><PlayCircle className="h-6 w-6 text-[#8A2BE2]" /></div>
                   <CardTitle>Área de Membros Premium</CardTitle>
@@ -87,7 +87,7 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl md:col-span-3">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><QrCode className="h-6 w-6 text-[#8A2BE2]" /></div>
                   <CardTitle>Venda Sem Checkout</CardTitle>
@@ -101,7 +101,7 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl md:col-span-3">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Ban className="h-6 w-6 text-[#8A2BE2]" /></div>
                   <CardTitle>Sem Bloqueios ou Retenção</CardTitle>
