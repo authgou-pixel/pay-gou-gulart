@@ -188,6 +188,19 @@ const Dashboard = () => {
     salesSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const pieColors = [
+    "#4D96FF",
+    "#FFD93D",
+    "#6BCB77",
+    "#FF6B6B",
+    "#845EC2",
+    "#00F5D4",
+    "#F15BB5",
+    "#FF9671",
+    "#2DBAE6",
+    "#FFC75F",
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -295,22 +308,21 @@ const Dashboard = () => {
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Tooltip />
-                  <Legend />
+                  <Tooltip formatter={(value, name) => [Number(value), name]} />
+                  <Legend iconType="circle" iconSize={10} verticalAlign="bottom" />
                   <Pie
                     data={series.map((s) => ({ name: s.date, value: s.value }))}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
+                    innerRadius={65}
+                    outerRadius={110}
+                    labelLine={false}
+                    label={(d) => `${d.name}: ${d.value}`}
                   >
                     {series.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={["#FF6B6B","#FFD93D","#6BCB77","#4D96FF","#B76CFD","#00F5D4","#F15BB5","#845EC2","#FF9671","#FFC75F"][index % 10]}
-                      />
+                      <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                     ))}
                   </Pie>
                 </PieChart>
