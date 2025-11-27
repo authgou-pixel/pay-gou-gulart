@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Rocket, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Rocket, Check, QrCode, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 const Subscription = () => {
@@ -16,6 +18,7 @@ const Subscription = () => {
   const [qrCode, setQrCode] = useState<string>("");
   const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
   const [paymentId, setPaymentId] = useState<string>("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -96,6 +99,13 @@ const Subscription = () => {
     }
   };
 
+  const copyPixCode = () => {
+    navigator.clipboard.writeText(qrCode);
+    setCopied(true);
+    toast.success("Código PIX copiado!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -162,13 +172,49 @@ const Subscription = () => {
               )}
               {qrCode && (
                 <>
+                  <CardHeader className="px-0">
+                    <div className="flex items-center gap-2">
+                      <QrCode className="h-6 w-6 text-primary" />
+                      <CardTitle>Pagamento via PIX</CardTitle>
+                    </div>
+                    <CardDescription>Escaneie o QR Code ou copie o código PIX para pagar</CardDescription>
+                  </CardHeader>
                   <div className="bg-white p-6 rounded-lg flex items-center justify-center">
                     {qrCodeBase64 ? (
-                      <img src={`data:image/png;base64,${qrCodeBase64}`} alt="QR Code" />
+                      <img src={`data:image/png;base64,${qrCodeBase64}`} alt="QR Code PIX" className="w-64 h-64 rounded-lg" />
                     ) : (
-                      <div className="text-sm">{qrCode}</div>
+                      <div className="w-64 h-64 bg-muted flex items-center justify-center rounded-lg">
+                        <QrCode className="h-32 w-32 text-muted-foreground" />
+                      </div>
                     )}
                   </div>
+
+                  <div className="space-y-2">
+                    <Label>Código PIX</Label>
+                    <div className="flex gap-2">
+                      <Input value={qrCode} readOnly className="font-mono text-xs border-primary/20" />
+                      <Button variant="outline" size="icon" onClick={copyPixCode} className="border-primary/20 hover:bg-primary/10">
+                        {copied ? (
+                          <Check className="h-4 w-4 text-success" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                    <p className="text-sm font-medium mb-1">Valor a pagar</p>
+                    <p className="text-2xl font-bold text-primary">R$ 37,90</p>
+                  </div>
+
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p>• Abra o app do seu banco</p>
+                    <p>• Escolha pagar via PIX</p>
+                    <p>• Escaneie o QR Code ou cole o código</p>
+                    <p>• Confirme o pagamento</p>
+                  </div>
+
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={handleRefresh}>Atualizar status</Button>
                     <Button onClick={() => setQrCode("")}>Nova tentativa</Button>
