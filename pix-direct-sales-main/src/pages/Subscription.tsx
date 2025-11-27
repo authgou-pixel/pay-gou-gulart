@@ -109,6 +109,12 @@ const Subscription = () => {
   };
 
   useEffect(() => {
+    if (!paymentId || status === "active") return;
+    const id = setInterval(() => { handleRefresh(); }, 10_000);
+    return () => clearInterval(id);
+  }, [paymentId, status]);
+
+  useEffect(() => {
     if (!expiresAt) return;
     const end = new Date(expiresAt).getTime();
     const now = Date.now();
@@ -181,7 +187,12 @@ const Subscription = () => {
                     <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Dashboard com vendas e área de membros.</li>
                     <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Integração Mercado Pago para vendas de produtos.</li>
                   </ul>
-                  <Button className="w-full bg-gradient-hero hover:opacity-90" onClick={() => { setSelectedPlan("monthly"); handleCreate(); }}>Escolher Plano Mensal</Button>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <Button className="w-full bg-gradient-hero hover:opacity-90" onClick={() => { setSelectedPlan("monthly"); handleCreate(); }}>Escolher Plano Mensal</Button>
+                    {enableTrial && (
+                      <Button variant="outline" className="w-full" onClick={() => { setSelectedPlan("trial"); handleCreate(); }}>Plano de Teste (R$ 2,00 / 5 min)</Button>
+                    )}
+                  </div>
                 </>
               )}
               {qrCode && (
@@ -219,7 +230,7 @@ const Subscription = () => {
 
                   <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                     <p className="text-sm font-medium mb-1">Valor a pagar</p>
-                    <p className="text-2xl font-bold text-primary">R$ 37,90</p>
+                    <p className="text-2xl font-bold text-primary">{selectedPlan === "trial" ? "R$ 2,00" : "R$ 37,90"}</p>
                   </div>
 
                   <div className="text-sm text-muted-foreground space-y-1">
@@ -244,3 +255,4 @@ const Subscription = () => {
 };
 
 export default Subscription;
+ 

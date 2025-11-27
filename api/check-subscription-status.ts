@@ -62,11 +62,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       } else {
         exp.setDate(exp.getDate() + 30);
       }
+      console.log("[subscription] activate", { user_id: sub.user_id, status, isTrial, activated_at: now.toISOString(), expires_at: exp.toISOString() });
       await supabase
         .from("subscriptions")
         .update({ status: "active", activated_at: now.toISOString(), expires_at: exp.toISOString() })
         .eq("user_id", sub.user_id);
     } else {
+      console.log("[subscription] update", { user_id: sub.user_id, status });
       await supabase
         .from("subscriptions")
         .update({ status })

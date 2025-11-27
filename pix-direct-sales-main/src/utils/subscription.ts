@@ -22,12 +22,19 @@ export function isSubscriptionActive(info: SubscriptionInfo | null): boolean {
   if (!info) return false;
   if (info.status !== "active") return false;
   if (!info.expires_at) return false;
-  return new Date(info.expires_at) > new Date();
+  const now = Date.now();
+  const end = new Date(info.expires_at).getTime();
+  const graceMs = 60_000; // 1 min de tolerância contra diferenças de fuso/latência
+  return end - graceMs > now;
 }
 
 export async function markExpiredIfNeeded(info: SubscriptionInfo | null): Promise<void> {
   if (!info) return;
-  const expired = info.expires_at ? new Date(info.expires_at) <= new Date() : true;
+  if (!info.expires_at) return; // nunca expira sem data definida
+  const end = new Date(info.expires_at).getTime();
+  const now = Date.now();
+  const graceMs = 60_000; // 1 min
+  const expired = end + graceMs <= now;
   if (expired && info.status !== "expired") {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
