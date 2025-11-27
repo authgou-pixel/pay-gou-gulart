@@ -33,7 +33,7 @@ const Index = () => {
           <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#5E2DBE]/20 blur-[100px]"></div>
           <div className="mx-auto max-w-6xl px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-white to-[#C6A3FF] bg-clip-text text-transparent">Plataforma completa para venda de produtos digitais</h1>
-            <p className="text-lg md:text-xl text-[#CFCFCF] mb-10 max-w-3xl mx-auto">Alta conversão, recuperação de vendas e operação sem bloqueios. Aprovação automática, saque rápido e integração direta.</p>
+            <p className="text-lg md:text-xl text-[#CFCFCF] mb-10 max-w-3xl mx-auto">Alta conversão e operação sem bloqueios. Aprovação automática, saque rápido e integração direta.</p>
             <div className="mt-10 flex justify-center">
               <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-4xl h-auto rounded-xl border border-[#8A2BE2]/30 shadow-lg" loading="lazy" referrerPolicy="no-referrer" />
             </div>
@@ -47,13 +47,13 @@ const Index = () => {
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><ArrowRightLeft className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Integração bancária direta</CardTitle>
-                  <CardDescription>Venda sem checkout tradicional. Pagamento vai direto para sua conta.</CardDescription>
+                  <CardTitle>Integração Bancária Direta</CardTitle>
+                  <CardDescription>Receba pagamentos sem checkout tradicional e com crédito imediato na sua conta.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
-                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> Depósito imediato via PIX</div>
-                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Sem intermediários e sem fila de repasse</div>
+                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> PIX compensado na hora</div>
+                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Zero intermediários e sem fila de repasse</div>
                   </div>
                 </CardContent>
               </Card>
@@ -61,13 +61,13 @@ const Index = () => {
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><CheckCircle className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Recebimento direto na conta</CardTitle>
-                  <CardDescription>Sem taxas da plataforma e sem retenção de saldo.</CardDescription>
+                  <CardTitle>Recebimento Instantâneo</CardTitle>
+                  <CardDescription>Receba seus valores sem taxas extras e sem retenção de saldo.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
-                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> D+0 com PIX, sem espera</div>
-                    <div className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-[#8A2BE2]" /> Operação simples e sem repasses</div>
+                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> PIX D+0 imediato</div>
+                    <div className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-[#8A2BE2]" /> Operação simples, transparente e sem repasses manuais</div>
                   </div>
                 </CardContent>
               </Card>
@@ -75,14 +75,14 @@ const Index = () => {
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><PlayCircle className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Área de membros premium</CardTitle>
-                  <CardDescription>Experiência estilo streaming para seus conteúdos.</CardDescription>
+                  <CardTitle>Área de Membros Premium</CardTitle>
+                  <CardDescription>Ofereça uma experiência profissional estilo streaming para seus conteúdos.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
-                    <div className="flex items-center gap-2"><Library className="h-4 w-4 text-[#8A2BE2]" /> Biblioteca organizada</div>
-                    <div className="flex items-center gap-2"><Download className="h-4 w-4 text-[#8A2BE2]" /> Downloads controlados</div>
-                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-[#8A2BE2]" /> Acesso imediato após pagamento</div>
+                    <div className="flex items-center gap-2"><Library className="h-4 w-4 text-[#8A2BE2]" /> Biblioteca organizada e fácil de navegar</div>
+                    <div className="flex items-center gap-2"><Download className="h-4 w-4 text-[#8A2BE2]" /> Downloads controlados com segurança</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-[#8A2BE2]" /> Acesso liberado automaticamente após o pagamento</div>
                   </div>
                 </CardContent>
               </Card>
@@ -90,13 +90,13 @@ const Index = () => {
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><QrCode className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Venda sem checkout</CardTitle>
-                  <CardDescription>Link direto e QR PIX automático para seus clientes.</CardDescription>
+                  <CardTitle>Venda Sem Checkout</CardTitle>
+                  <CardDescription>Crie links diretos ou QR Codes PIX para pagamentos instantâneos.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
-                    <div className="flex items-center gap-2"><QrCode className="h-4 w-4 text-[#8A2BE2]" /> Geração instantânea de pagamento</div>
-                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-[#8A2BE2]" /> Fluxo simples e conversão alta</div>
+                    <div className="flex items-center gap-2"><QrCode className="h-4 w-4 text-[#8A2BE2]" /> Pagamento gerado em segundos</div>
+                    <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-[#8A2BE2]" /> Fluxo direto que aumenta a conversão</div>
                   </div>
                 </CardContent>
               </Card>
@@ -104,30 +104,18 @@ const Index = () => {
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Ban className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Sem bloqueios e sem retenção</CardTitle>
-                  <CardDescription>Integração direta com banco: dinheiro não fica parado na plataforma.</CardDescription>
+                  <CardTitle>Sem Bloqueios ou Retenção</CardTitle>
+                  <CardDescription>Conexão bancária real: o dinheiro vai direto para sua conta sem travas.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
-                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> PIX direto D+0, sem espera</div>
-                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Sem tranca de saldo ou reservas</div>
+                    <div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-[#8A2BE2]" /> PIX D+0 sem espera</div>
+                    <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-[#8A2BE2]" /> Sem congelamentos, reservas ou trancas de saldo</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><RefreshCcw className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Recuperação de vendas</CardTitle>
-                  <CardDescription>Estratégias para retomar carrinhos abandonados.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="mt-2 space-y-2 text-sm text-[#AFAFAF]">
-                    <div className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-[#8A2BE2]" /> Follow-up automatizado</div>
-                    <div className="flex items-center gap-2"><QrCode className="h-4 w-4 text-[#8A2BE2]" /> Links de retorno</div>
-                  </div>
-                </CardContent>
-              </Card>
+              
             </div>
           </div>
         </section>
