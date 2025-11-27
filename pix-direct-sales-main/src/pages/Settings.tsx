@@ -94,7 +94,7 @@ const Settings = () => {
             user_id: session.user.id,
             access_token: accessToken,
           },
-          { onConflict: "user_id" }
+          { onConflict: "user_id", returning: "minimal" }
         );
 
       if (error) throw error;
