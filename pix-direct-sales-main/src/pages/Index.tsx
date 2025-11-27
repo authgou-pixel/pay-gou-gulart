@@ -11,8 +11,7 @@ const Index = () => {
       <header className="w-full sticky top-0 z-40 border-b border-[#8A2BE2]/30 bg-[#1A1A1A]/90 backdrop-blur">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md bg-gradient-to-br from-[#8A2BE2] to-[#5E2DBE]"></div>
-            <span className="font-bold tracking-wide">PIX Direct Sales</span>
+            <img src="https://i.imgur.com/JaOLGxd.png" alt="Logo" className="h-8 w-auto" />
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" className="border-[#8A2BE2]/40 text-white hover:bg-[#8A2BE2]/10" onClick={() => navigate("/auth")}> 
