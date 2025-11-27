@@ -43,7 +43,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       notificationUrl = undefined;
     }
 
-    const amount = planType === "trial" ? 2 : 37.9;
+    const enableTrial = String(process.env.ENABLE_TRIAL_PLAN || "").toLowerCase() === "true";
+    const isTrial = planType === "trial" && enableTrial;
+    const amount = isTrial ? 2 : 37.9;
 
     const mpResp = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
@@ -55,13 +57,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       body: JSON.stringify((() => {
         const payload: Record<string, unknown> = {
           transaction_amount: Number(amount),
-          description: planType === "trial" ? "Plano de teste - 5 minutos" : "Assinatura Mensal",
+          description: isTrial ? "Plano de teste - 5 minutos" : "Assinatura Mensal",
           payment_method_id: "pix",
           payer: {
             email: buyerEmail,
             first_name: buyerName,
           },
-          external_reference: planType === "trial" ? `subscription-${userId}-trial` : `subscription-${userId}`,
+          external_reference: isTrial ? `subscription-${userId}-trial` : `subscription-${userId}`,
         };
         if (notificationUrl) payload.notification_url = notificationUrl;
         return payload;
