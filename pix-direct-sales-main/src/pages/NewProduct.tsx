@@ -91,8 +91,9 @@ const NewProduct = () => {
       toast.success("Produto criado com sucesso!");
       navigate("/dashboard");
     } catch (err) {
-      const message = (err as { message?: string }).message;
-      toast.error(message || "Erro ao criar produto");
+      const e = err as { message?: string; code?: string; details?: string; hint?: string };
+      const parts = [e.message, e.code, e.details, e.hint].filter(Boolean);
+      toast.error(parts.join(" — ") || "Erro ao criar produto");
     } finally {
       setLoading(false);
     }
