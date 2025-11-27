@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Rocket, Check } from "lucide-react";
 import { toast } from "sonner";
 
 const Subscription = () => {
@@ -113,37 +112,52 @@ const Subscription = () => {
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Assinatura</h1>
         {active ? (
-          <Card>
+          <Card className="border-primary/20 shadow-purple">
             <CardHeader>
-              <CardTitle>Plano Mensal</CardTitle>
-              <CardDescription>R$ 37,90 por 30 dias</CardDescription>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Rocket className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="uppercase">Plano Mensal</CardTitle>
+                  <CardDescription>Duração: 30 dias</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-sm">Sua assinatura está ativa.</div>
+            <CardContent className="space-y-4">
+              <div className="text-5xl font-extrabold bg-gradient-hero bg-clip-text text-transparent">R$ 37,90 <span className="text-base align-top text-foreground">/ mês</span></div>
+              <div className="text-sm text-muted-foreground">Sua assinatura está ativa.</div>
               <div className="text-sm">Expira em: {expiresAt ? new Date(expiresAt).toLocaleString() : "-"}</div>
               <div className="mt-4">
-                <Button onClick={handleCreate}>Renovar Assinatura</Button>
+                <Button className="bg-primary" onClick={handleCreate}>Renovar Assinatura</Button>
               </div>
             </CardContent>
           </Card>
         ) : (
-          <Card>
+          <Card className="border-primary/20 shadow-purple">
             <CardHeader>
-              <CardTitle>Plano Mensal</CardTitle>
-              <CardDescription>R$ 37,90 por 30 dias</CardDescription>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Rocket className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="uppercase">Plano Mensal</CardTitle>
+                  <CardDescription>Duração: 30 dias</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {!qrCode && (
                 <>
-                  <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Nome</Label>
-                    <Input value={buyerName} onChange={(e) => setBuyerName(e.target.value)} />
-                  </div>
-                  <Button className="w-full" onClick={handleCreate}>Assinar Agora</Button>
+                  <div className="text-5xl font-extrabold bg-gradient-hero bg-clip-text text-transparent">R$ 37,90 <span className="text-base align-top text-foreground">/ mês</span></div>
+                  <ul className="space-y-2 text-sm text-foreground">
+                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Sem taxas por venda — você recebe 100%.</li>
+                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> QR Code PIX instantâneo para seus clientes.</li>
+                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Links de pagamento simples e rápidos.</li>
+                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Dashboard com vendas e área de membros.</li>
+                    <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Integração Mercado Pago para vendas de produtos.</li>
+                  </ul>
+                  <Button className="w-full bg-gradient-hero hover:opacity-90" onClick={handleCreate}>Escolher Plano Mensal</Button>
                 </>
               )}
               {qrCode && (
