@@ -43,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       notificationUrl = undefined;
     }
 
-    const enableTrial = String(process.env.ENABLE_TRIAL_PLAN || "").toLowerCase() === "true";
+    const enableTrial = String(process.env.ENABLE_TRIAL_PLAN ?? "true").toLowerCase() !== "false";
     const isTrial = planType === "trial" && enableTrial;
     const amount = isTrial ? 2 : 37.9;
 
