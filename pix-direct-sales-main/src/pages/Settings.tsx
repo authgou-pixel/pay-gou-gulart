@@ -87,24 +87,23 @@ const Settings = () => {
         return;
       }
 
-      const { error } = await supabase
-        .from("mercado_pago_config")
-        .upsert(
-          {
-            user_id: session.user.id,
-            access_token: accessToken,
-          },
-          { onConflict: "user_id", returning: "minimal" }
-        );
+      const prefixOk = accessToken.startsWith("APP_USR-");
+      if (!prefixOk || accessToken.length < 24) {
+        toast.error("Access Token inválido. Use o formato APP_USR-...");
+        return;
+      }
+
+      const { error } = await supabase.rpc("save_mp_token", { token: accessToken });
 
       if (error) throw error;
 
       toast.success("Configuração salva com sucesso!");
       setAccessToken("••••••••••••••••");
       setHasConfig(true);
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Erro ao salvar configuração";
-      toast.error(message);
+    } catch (e: unknown) {
+      const err = e as { message?: string; name?: string; stack?: string; code?: string; details?: string; hint?: string };
+      const parts = [err.message, err.code, err.details, err.hint].filter(Boolean);
+      toast.error(parts.join(" — ") || "Erro ao salvar configuração");
     } finally {
       setLoading(false);
     }
