@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Banknote, ArrowRightLeft, Library, Download, QrCode, Shield, User } from "lucide-react";
+import { Upload, Banknote, ArrowRightLeft, Library, Download, QrCode, Shield, User, Palette, CheckCircle, PlayCircle, Users, Ban, RefreshCcw } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -10,7 +10,12 @@ const Index = () => {
     <div className="min-h-screen bg-[#1A1A1A] text-white">
       <header className="w-full sticky top-0 z-40 border-b border-[#8A2BE2]/30 bg-[#1A1A1A]/90 backdrop-blur">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3" />
+          <div className="flex items-center gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#232323] border border-[#8A2BE2]/30 text-[#CFCFCF]">
+              <Shield className="h-4 w-4 text-[#8A2BE2]" />
+              <span>GouPay</span>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" className="border-[#8A2BE2]/40 text-white hover:bg-[#8A2BE2]/10" onClick={() => navigate("/auth")}> 
               <User className="h-4 w-4 mr-2" /> Entrar
@@ -27,8 +32,8 @@ const Index = () => {
           <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[#8A2BE2]/20 blur-[100px]"></div>
           <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#5E2DBE]/20 blur-[100px]"></div>
           <div className="mx-auto max-w-6xl px-4 text-center">
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-white to-[#C6A3FF] bg-clip-text text-transparent">Hospede e venda seus produtos digitais sem taxas</h1>
-            <p className="text-lg md:text-xl text-[#CFCFCF] mb-10 max-w-3xl mx-auto">Hospedagem gratuita, vendas diretas e integração bancária instantânea. Esqueça o checkout tradicional.</p>
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-white to-[#C6A3FF] bg-clip-text text-transparent">Plataforma completa para venda de produtos digitais</h1>
+            <p className="text-lg md:text-xl text-[#CFCFCF] mb-10 max-w-3xl mx-auto">Alta conversão, recuperação de vendas e operação sem bloqueios. Aprovação automática, saque rápido e integração direta.</p>
             <div className="mt-10 flex justify-center">
               <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-4xl h-auto rounded-xl border border-[#8A2BE2]/30 shadow-lg" loading="lazy" referrerPolicy="no-referrer" />
             </div>
@@ -41,47 +46,50 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Upload className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Hospedagem gratuita</CardTitle>
-                  <CardDescription>Faça upload dos seus e-books, PDFs e vídeos sem custo.</CardDescription>
+                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Palette className="h-6 w-6 text-[#8A2BE2]" /></div>
+                  <CardTitle>Checkout customizável</CardTitle>
+                  <CardDescription>Estilos, cores e elementos ajustáveis para sua oferta.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <svg viewBox="0 0 120 60" className="w-full h-24" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="8" y="14" width="80" height="32" rx="6" fill="#2B2B2B" stroke="#8A2BE2" opacity="0.6" />
-                    <rect x="20" y="22" width="56" height="6" rx="3" fill="#8A2BE2" />
-                    <rect x="20" y="32" width="40" height="6" rx="3" fill="#B08CFF" />
-                  </svg>
-                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Banknote className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Vendas diretas</CardTitle>
-                  <CardDescription>Receba via PIX direto na sua conta, sem taxas intermediárias.</CardDescription>
+                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><CheckCircle className="h-6 w-6 text-[#8A2BE2]" /></div>
+                  <CardTitle>Aprovação instantânea</CardTitle>
+                  <CardDescription>Produtos liberados sem fricção e sem bloqueios.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <svg viewBox="0 0 120 60" className="w-full h-24" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="28" cy="30" r="14" fill="#2B2B2B" stroke="#8A2BE2" opacity="0.6" />
-                    <path d="M22 30h12" stroke="#8A2BE2" strokeWidth="3" />
-                    <rect x="54" y="22" width="46" height="16" rx="4" fill="#2B2B2B" stroke="#B08CFF" opacity="0.6" />
-                  </svg>
-                </CardContent>
               </Card>
 
               <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><ArrowRightLeft className="h-6 w-6 text-[#8A2BE2]" /></div>
-                  <CardTitle>Integração bancária direta</CardTitle>
-                  <CardDescription>Fluxo simples e seguro, sem checkout tradicional.</CardDescription>
+                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><PlayCircle className="h-6 w-6 text-[#8A2BE2]" /></div>
+                  <CardTitle>Área de membros premium</CardTitle>
+                  <CardDescription>Experiência estilo streaming para seus conteúdos.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <svg viewBox="0 0 120 60" className="w-full h-24" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="14" y="20" width="32" height="20" rx="4" fill="#2B2B2B" stroke="#8A2BE2" opacity="0.6" />
-                    <rect x="74" y="20" width="32" height="20" rx="4" fill="#2B2B2B" stroke="#B08CFF" opacity="0.6" />
-                    <path d="M48 30h24" stroke="#8A2BE2" strokeWidth="2" />
-                  </svg>
-                </CardContent>
+              </Card>
+
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Users className="h-6 w-6 text-[#8A2BE2]" /></div>
+                  <CardTitle>Afiliação e coprodução</CardTitle>
+                  <CardDescription>Parcerias e marketplace para escalar vendas.</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><Ban className="h-6 w-6 text-[#8A2BE2]" /></div>
+                  <CardTitle>Sem bloqueios</CardTitle>
+                  <CardDescription>Operação transparente e segura para qualquer produto.</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="bg-[#232323] border-[#8A2BE2]/20 hover:border-[#8A2BE2]/40 transition transform hover:-translate-y-1 hover:shadow-2xl">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-[#8A2BE2]/20 flex items-center justify-center mb-3"><RefreshCcw className="h-6 w-6 text-[#8A2BE2]" /></div>
+                  <CardTitle>Recuperação de vendas</CardTitle>
+                  <CardDescription>Estratégias para retomar carrinhos abandonados.</CardDescription>
+                </CardHeader>
               </Card>
             </div>
           </div>
@@ -109,17 +117,7 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="py-20">
-          <div className="mx-auto max-w-6xl px-4 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-[#232323] border border-[#8A2BE2]/30 shadow">
-              <Shield className="h-5 w-5 text-[#8A2BE2]" />
-              <span className="text-[#CFCFCF]">Segurança e performance com integração Mercado Pago</span>
-            </div>
-            <div className="mt-8">
-              <Button className="bg-gradient-to-r from-[#8A2BE2] to-[#D34FE2] text-black font-semibold hover:opacity-90" onClick={() => navigate("/auth?signup=1")}>Comece agora</Button>
-            </div>
-          </div>
-        </section>
+        
       </main>
 
       <footer className="border-t border-[#8A2BE2]/30 py-8">
