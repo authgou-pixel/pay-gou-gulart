@@ -18,22 +18,8 @@ const Index = () => {
           <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto">
             Plataforma inovadora para vender e-books, PDFs e vídeos com pagamento instantâneo via PIX
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg"
-              onClick={() => navigate("/auth")}
-              className="bg-white text-primary hover:bg-white/90 shadow-purple"
-            >
-              Começar Agora
-            </Button>
-            <Button 
-              size="lg"
-              variant="outline"
-              onClick={() => navigate("/auth")}
-              className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm"
-            >
-              Fazer Login
-            </Button>
+          <div className="mt-10 flex justify-center">
+            <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-4xl h-auto rounded-xl border border-primary/30 shadow-lg" loading="lazy" referrerPolicy="no-referrer" />
           </div>
         </div>
       </section>
