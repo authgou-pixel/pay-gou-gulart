@@ -89,10 +89,13 @@ const Settings = () => {
 
       const { error } = await supabase
         .from("mercado_pago_config")
-        .upsert({
-          user_id: session.user.id,
-          access_token: accessToken,
-        });
+        .upsert(
+          {
+            user_id: session.user.id,
+            access_token: accessToken,
+          },
+          { onConflict: "user_id" }
+        );
 
       if (error) throw error;
 
