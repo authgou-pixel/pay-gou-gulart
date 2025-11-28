@@ -353,6 +353,13 @@ const Dashboard = () => {
         </div>
       </main>
       <aside className={`hidden md:flex fixed left-0 top-0 h-screen bg-transparent p-4 flex-col gap-3 transition-[width] duration-300 ease-out ${desktopSidebarCollapsed ? "w-[64px]" : "w-[250px]"}`}>
+        <button
+          aria-label="Alternar menu"
+          className="hidden md:flex h-10 w-10 items-center justify-center rounded-md bg-card border border-border/60 mb-2"
+          onClick={() => setDesktopSidebarCollapsed((v) => !v)}
+        >
+          <span className="text-xl">☰</span>
+        </button>
         <Button 
           variant="ghost"
           className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2"
@@ -411,15 +418,8 @@ const Dashboard = () => {
       </aside>
       <button
         aria-label="Abrir menu"
-        className="md:hidden fixed left-3 top-3 z-40 h-10 w-10 rounded-full bg-card border border-border/60 flex items-center justify-center"
+        className="md:hidden fixed left-4 top-4 z-40 h-10 w-10 rounded-full bg-card border border-border/60 flex items-center justify-center"
         onClick={() => setMobileSidebarExpanded((v) => !v)}
-      >
-        <span className="text-xl">☰</span>
-      </button>
-      <button
-        aria-label="Alternar menu"
-        className="hidden md:flex fixed left-3 top-3 z-40 h-10 w-10 items-center justify-center bg-transparent hover:bg-transparent border-none shadow-none"
-        onClick={() => setDesktopSidebarCollapsed((v) => !v)}
       >
         <span className="text-xl">☰</span>
       </button>
