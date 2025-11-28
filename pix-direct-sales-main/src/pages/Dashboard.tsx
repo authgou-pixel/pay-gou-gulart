@@ -189,6 +189,7 @@ const Dashboard = () => {
   };
   const pieColor = "#8A2BE2";
   const [mobileSidebarExpanded, setMobileSidebarExpanded] = useState<boolean>(false);
+  const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState<boolean>(false);
 
   if (loading) {
     return (
@@ -201,7 +202,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <div className="w-full bg-card/80 border-b border-border/50 z-20">
-        <div className={`mx-auto max-w-6xl py-4 flex items-center justify-between px-4 md:px-6 ${mobileSidebarExpanded ? "pl-[232px]" : "pl-[76px]"} md:pl-[300px]`}>
+        <div className={`mx-auto max-w-6xl py-4 flex items-center justify-between px-4 md:px-6 ${mobileSidebarExpanded ? "pl-[232px]" : "pl-[76px]"} ${desktopSidebarCollapsed ? "md:pl-[80px]" : "md:pl-[250px]"}`}>
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">R$ {periodStats.revenue.toFixed(2)} / R$ 10,00K</div>
             <div className="w-24 md:w-40 h-2 bg-muted rounded">
@@ -240,7 +241,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <main className={`mx-auto max-w-6xl px-4 md:px-6 py-6 md:pl-[300px] ${mobileSidebarExpanded ? "pl-[232px]" : "pl-[76px]"}`}>
+      <main className={`mx-auto max-w-6xl px-4 md:px-6 py-6 ${desktopSidebarCollapsed ? "md:pl-[80px]" : "md:pl-[250px]"} ${mobileSidebarExpanded ? "pl-[232px]" : "pl-[76px]"}`}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="bg-card border rounded-xl">
             <CardHeader className="pb-2">
@@ -351,35 +352,46 @@ const Dashboard = () => {
         </Card>
         </div>
       </main>
-      <aside className="hidden md:flex fixed left-0 top-0 h-screen w-[250px] bg-card border-r border-border/50 p-4 flex-col gap-3">
-        <div className="text-sm font-semibold text-muted-foreground mb-1">Navegação</div>
+      <aside className={`hidden md:flex fixed left-0 top-0 h-screen bg-card border-r border-border/50 p-4 flex-col gap-3 transition-[width] duration-300 ease-out ${desktopSidebarCollapsed ? "w-[64px]" : "w-[250px]"}`}>
+        <div className={desktopSidebarCollapsed ? "hidden" : "text-sm font-semibold text-muted-foreground mb-1"}>Navegação</div>
         <Button variant="outline" className="justify-start gap-2" onClick={() => navigate("/dashboard")}>
-          <Package className="h-4 w-4" /> Produtos
+          <Package className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span>Produtos</span>}
         </Button>
-        <div className="pl-6 flex flex-col gap-2">
-          <Button variant="ghost" className="justify-start" onClick={() => navigate("/dashboard/new-product")}>Criar Produto</Button>
-          <Button variant="ghost" className="justify-start" onClick={() => navigate("/dashboard/products")}>Produtos Criados</Button>
-        </div>
+        {!desktopSidebarCollapsed && (
+          <div className="pl-6 flex flex-col gap-2">
+            <Button variant="ghost" className="justify-start" onClick={() => navigate("/dashboard/new-product")}>Criar Produto</Button>
+            <Button variant="ghost" className="justify-start" onClick={() => navigate("/dashboard/products")}>Produtos Criados</Button>
+          </div>
+        )}
         <Button variant="outline" className="justify-start gap-2" onClick={handleGoToSales}>
-          <DollarSign className="h-4 w-4" /> Vendas
+          <DollarSign className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span>Vendas</span>}
         </Button>
         <Button variant="outline" className="justify-start gap-2" onClick={() => navigate("/dashboard/settings")}>
-          <CreditCard className="h-4 w-4" /> Pagamentos
+          <CreditCard className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span>Pagamentos</span>}
         </Button>
-        <Button
-          className="justify-start gap-2 bg-gradient-to-r from-primary to-purple-700 text-white"
-          onClick={() => navigate("/dashboard/subscription")}
-        >
-          Upgrade
-        </Button>
+        {!desktopSidebarCollapsed && (
+          <Button
+            className="justify-start gap-2 bg-gradient-to-r from-primary to-purple-700 text-white"
+            onClick={() => navigate("/dashboard/subscription")}
+          >
+            Upgrade
+          </Button>
+        )}
         <Button variant="outline" className="justify-start gap-2 mt-auto" onClick={() => navigate("/dashboard/settings")}> 
-          <SettingsIcon className="h-4 w-4" /> Configurações
+          <SettingsIcon className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span>Configurações</span>}
         </Button>
       </aside>
       <button
         aria-label="Abrir menu"
         className="md:hidden fixed left-3 top-3 z-40 h-10 w-10 rounded-full bg-card border border-border/60 flex items-center justify-center"
         onClick={() => setMobileSidebarExpanded((v) => !v)}
+      >
+        <span className="text-xl">☰</span>
+      </button>
+      <button
+        aria-label="Alternar menu"
+        className="hidden md:flex fixed left-3 top-3 z-40 h-10 w-10 rounded-full bg-card border border-border/60 items-center justify-center"
+        onClick={() => setDesktopSidebarCollapsed((v) => !v)}
       >
         <span className="text-xl">☰</span>
       </button>
