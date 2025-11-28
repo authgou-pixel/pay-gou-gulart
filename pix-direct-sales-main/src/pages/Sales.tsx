@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // removed Input import as it is not used
 import { toast } from "sonner";
-import { Check, Clock } from "lucide-react";
+import { Check, Clock, Menu, ChevronLeft, CalendarRange, CheckCircle2, FileJson, FileText } from "lucide-react";
 
 type Sale = {
   id: string;
@@ -204,7 +204,7 @@ const Sales = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="relative z-40 border-b bg-card/50 backdrop-blur-sm border-primary/20">
-        <div className={`container mx-auto px-4 py-4 flex items-center justify-between md:px-6 ${mobileMenuExpanded ? "pl-[76px]" : "pl-0"} md:pl-0`}>
+        <div className={`container mx-auto px-4 py-4 flex items-center justify-between md:px-6`}>
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost" className="h-10 px-3" onClick={() => navigate('/dashboard')}>Voltar ao Dashboard</Button>
             <Popover>
@@ -221,10 +221,11 @@ const Sales = () => {
           </div>
           <button
             aria-label="Abrir menu"
-            className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-full bg-card border border-border/60"
+            aria-expanded={mobileMenuExpanded}
+            className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-full bg-card border border-border/60 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary transition"
             onClick={() => setMobileMenuExpanded(v => !v)}
           >
-            <span className="text-xl">☰</span>
+            <Menu className="h-5 w-5" />
           </button>
           <div className="text-xs text-muted-foreground hidden md:block">
             <span className="mr-3">Identificadas: {sales.length}</span>
@@ -233,35 +234,40 @@ const Sales = () => {
         </div>
       </header>
 
-      <main className={`mx-auto px-4 py-6 md:px-6 ${mobileMenuExpanded ? "pl-[232px]" : "pl-[76px]"} md:pl-0`}>
-        <aside
-          className={`md:hidden fixed left-0 top-0 h-screen bg-card border-r border-border/50 pt-16 transition-[width] duration-300 ease-out overflow-hidden z-30 ${mobileMenuExpanded ? "w-[220px]" : "w-[64px]"}`}
+      <main className={`mx-auto px-4 py-6 md:px-6`}>
+        <div
+          className={`md:hidden fixed left-0 top-0 h-screen w-64 bg-card border-r border-border/50 pt-16 z-30 transform transition-transform duration-300 ease-out will-change-transform ${mobileMenuExpanded ? "translate-x-0" : "-translate-x-full"}`}
         >
-          <nav className="flex flex-col gap-2 px-3">
-            <Button variant="ghost" className={`justify-start h-12 px-2 gap-3 bg-transparent hover:bg-transparent border-none rounded-none shadow-none`} onClick={() => { navigate('/dashboard'); setMobileMenuExpanded(false); }}>
-              {mobileMenuExpanded && <span>Voltar ao Dashboard</span>}
+          <nav className="flex flex-col gap-1 px-2">
+            <Button variant="ghost" className="justify-start h-12 px-2 gap-3 hover:bg-muted" onClick={() => { navigate('/dashboard'); setMobileMenuExpanded(false); }}>
+              <ChevronLeft className="h-4 w-4" />
+              <span>Voltar ao Dashboard</span>
             </Button>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" className={`justify-start h-12 px-2 gap-3 bg-transparent hover:bg-transparent border-none rounded-none shadow-none`}>
-                  {mobileMenuExpanded && <span>Selecionar período</span>}
+                <Button variant="ghost" className="justify-start h-12 px-2 gap-3 hover:bg-muted">
+                  <CalendarRange className="h-4 w-4" />
+                  <span>Selecionar período</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="p-2 bg-card border border-border rounded-lg shadow-md w-[95vw] max-w-[680px] sm:w-auto sm:min-w-[640px]" align="center" sideOffset={8}>
                 <Calendar mode="range" selected={{ from: range.from, to: range.to }} onSelect={(r: { from?: Date; to?: Date } | undefined) => setRange(r || {})} numberOfMonths={2} />
               </PopoverContent>
             </Popover>
-            <Button variant={onlyConfirmed ? "default" : "ghost"} className={`justify-start h-12 px-2 gap-3 bg-transparent hover:bg-transparent border-none rounded-none shadow-none`} onClick={() => setOnlyConfirmed(v => !v)} aria-pressed={onlyConfirmed}>
-              {mobileMenuExpanded && <span>Apenas confirmadas</span>}
+            <Button variant={onlyConfirmed ? "default" : "ghost"} className="justify-start h-12 px-2 gap-3 hover:bg-muted" onClick={() => setOnlyConfirmed(v => !v)} aria-pressed={onlyConfirmed}>
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Apenas confirmadas</span>
             </Button>
-            <Button variant="ghost" className={`justify-start h-12 px-2 gap-3 bg-transparent hover:bg-transparent border-none rounded-none shadow-none`} onClick={() => { exportJSON(); setMobileMenuExpanded(false); }}>
-              {mobileMenuExpanded && <span>Exportar JSON</span>}
+            <Button variant="ghost" className="justify-start h-12 px-2 gap-3 hover:bg-muted" onClick={() => { exportJSON(); setMobileMenuExpanded(false); }}>
+              <FileJson className="h-4 w-4" />
+              <span>Exportar JSON</span>
             </Button>
-            <Button variant="ghost" className={`justify-start h-12 px-2 gap-3 bg-transparent hover:bg-transparent border-none rounded-none shadow-none`} onClick={() => { exportCSV(); setMobileMenuExpanded(false); }}>
-              {mobileMenuExpanded && <span>Exportar CSV</span>}
+            <Button variant="ghost" className="justify-start h-12 px-2 gap-3 hover:bg-muted" onClick={() => { exportCSV(); setMobileMenuExpanded(false); }}>
+              <FileText className="h-4 w-4" />
+              <span>Exportar CSV</span>
             </Button>
           </nav>
-        </aside>
+        </div>
         <Card className="border-primary/20 relative z-10">
           <CardHeader>
             <CardTitle className="text-sm">Transações</CardTitle>
