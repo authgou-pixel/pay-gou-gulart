@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+// removed Input import as it is not used
 import { toast } from "sonner";
 
 type Sale = {
@@ -20,15 +20,14 @@ type Sale = {
 
 type Product = { id: string; name: string };
 
-type Timeframe = "day" | "weekly" | "monthly" | "custom";
+type Timeframe = "custom";
 
 const Sales = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [sales, setSales] = useState<Sale[]>([]);
   const [products, setProducts] = useState<Record<string, Product>>({});
-  const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
-  const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
+  const [timeframe, setTimeframe] = useState<Timeframe>("custom");
   const [range, setRange] = useState<{ from?: Date; to?: Date }>({});
 
   useEffect(() => {
@@ -51,29 +50,13 @@ const Sales = () => {
       await loadSales(uid);
     };
     refresh();
-  }, [timeframe, selectedDay, range.from, range.to]);
+  }, [range.from, range.to]);
 
   const period = useMemo(() => {
     const now = new Date();
     let start = new Date(now);
     let end = new Date(now);
-    if (timeframe === "day") {
-      const base = selectedDay || now;
-      start = new Date(base);
-      start.setHours(0, 0, 0, 0);
-      end = new Date(base);
-      end.setHours(23, 59, 59, 999);
-    } else if (timeframe === "weekly") {
-      end.setHours(23, 59, 59, 999);
-      start = new Date(end);
-      start.setDate(start.getDate() - 6);
-      start.setHours(0, 0, 0, 0);
-    } else if (timeframe === "monthly") {
-      end.setHours(23, 59, 59, 999);
-      start = new Date(end);
-      start.setDate(start.getDate() - 29);
-      start.setHours(0, 0, 0, 0);
-    } else {
+    {
       if (range.from && range.to) {
         start = new Date(range.from);
         start.setHours(0, 0, 0, 0);
@@ -87,7 +70,7 @@ const Sales = () => {
       }
     }
     return { start, end };
-  }, [timeframe, selectedDay, range]);
+  }, [range]);
 
   const loadSales = async (userId: string) => {
     try {
@@ -131,32 +114,16 @@ const Sales = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm border-primary/20">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <CardTitle className="text-xl">Vendas</CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant={timeframe === "day" ? "default" : "outline"} size="sm" onClick={() => setTimeframe("day")}>Dia</Button>
-            <Button variant={timeframe === "weekly" ? "default" : "outline"} size="sm" onClick={() => setTimeframe("weekly")}>Semana</Button>
-            <Button variant={timeframe === "monthly" ? "default" : "outline"} size="sm" onClick={() => setTimeframe("monthly")}>Mês</Button>
-            <Button variant={timeframe === "custom" ? "default" : "outline"} size="sm" onClick={() => setTimeframe("custom")}>Período</Button>
-            {timeframe === "day" && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">Selecionar dia</Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0" align="end">
-                  <Calendar mode="single" selected={selectedDay} onSelect={setSelectedDay} />
-                </PopoverContent>
-              </Popover>
-            )}
-            {timeframe === "custom" && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">Selecionar período</Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-2" align="end">
-                  <Calendar mode="range" selected={{ from: range.from, to: range.to }} onSelect={(r: { from?: Date; to?: Date } | undefined) => setRange(r || {})} numberOfMonths={2} />
-                </PopoverContent>
-              </Popover>
-            )}
+            <Button variant="outline" size="sm" onClick={() => navigate('/dashboard')}>Voltar ao Dashboard</Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="default" size="sm">Selecionar período</Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-2" align="end">
+                <Calendar mode="range" selected={{ from: range.from, to: range.to }} onSelect={(r: { from?: Date; to?: Date } | undefined) => setRange(r || {})} numberOfMonths={2} />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </header>
