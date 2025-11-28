@@ -153,17 +153,17 @@ const PaymentPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7] p-6">
+    <div className="payment-bg p-6">
       {!showPayment ? (
         <div className="mx-auto max-w-6xl grid gap-4 md:grid-cols-3">
           <Card className="bg-white shadow-sm border rounded-xl">
             <CardHeader>
-              <CardTitle className="text-base tracking-wide">Identifique-se</CardTitle>
-              <CardDescription>Utilizaremos seu e‑mail para identificação</CardDescription>
+              <CardTitle className="text-base tracking-wide text-[#2B2B2B]">Identifique-se</CardTitle>
+              <CardDescription className="text-neutral-700">Utilizaremos seu e‑mail para identificação</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="buyer_email" className="text-emerald-700">Email</Label>
+                <Label htmlFor="buyer_email" className="text-[#6A2FE0]">Email</Label>
                 <Input
                   id="buyer_email"
                   type="email"
@@ -172,16 +172,16 @@ const PaymentPage = () => {
                   onChange={(e) => setBuyerEmail(e.target.value)}
                   onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                   aria-invalid={touched.email && !emailValid}
-                  className="rounded-lg"
+                  className="rounded-lg bg-[#F2ECFF] border-[#8A2BE2]/30 text-[#1B1426] placeholder-[#7A73A8] focus-visible:ring-2 focus-visible:ring-[#8A2BE2] focus-visible:border-[#8A2BE2]"
                 />
                 {touched.email && (
-                  <p className={`text-xs ${emailValid ? "text-emerald-600" : "text-destructive"}`}>
+                  <p className={`text-xs ${emailValid ? "text-[#6A2FE0]" : "text-destructive"}`}>
                     {emailValid ? "E‑mail válido" : "Informe um e‑mail válido"}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="buyer_name" className="text-emerald-700">Nome completo</Label>
+                <Label htmlFor="buyer_name" className="text-[#6A2FE0]">Nome completo</Label>
                 <Input
                   id="buyer_name"
                   placeholder="Digite seu nome completo"
@@ -192,10 +192,10 @@ const PaymentPage = () => {
                   }}
                   onBlur={() => setTouched((t) => ({ ...t, name: true }))}
                   aria-invalid={touched.name && !nameValid}
-                  className="rounded-lg"
+                  className="rounded-lg bg-[#F2ECFF] border-[#8A2BE2]/30 text-[#1B1426] placeholder-[#7A73A8] focus-visible:ring-2 focus-visible:ring-[#8A2BE2] focus-visible:border-[#8A2BE2]"
                 />
                 {touched.name && (
-                  <p className={`text-xs ${nameValid ? "text-emerald-600" : "text-destructive"}`}>
+                  <p className={`text-xs ${nameValid ? "text-[#6A2FE0]" : "text-destructive"}`}>
                     {nameValid ? "Nome válido" : "Use apenas letras e espaços"}
                   </p>
                 )}
