@@ -120,7 +120,7 @@ const Sales = () => {
               <PopoverTrigger asChild>
                 <Button variant="default" size="sm">Selecionar período</Button>
               </PopoverTrigger>
-              <PopoverContent className="p-2 bg-card border border-border rounded-lg shadow-md min-w-[640px]" align="end" sideOffset={8}>
+              <PopoverContent className="p-2 bg-card border border-border rounded-lg shadow-md w-[95vw] max-w-[680px] sm:w-auto sm:min-w-[640px]" align="center" sideOffset={8}>
                 <Calendar mode="range" selected={{ from: range.from, to: range.to }} onSelect={(r: { from?: Date; to?: Date } | undefined) => setRange(r || {})} numberOfMonths={2} />
               </PopoverContent>
             </Popover>
