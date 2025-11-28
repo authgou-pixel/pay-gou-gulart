@@ -46,11 +46,18 @@ const Settings = () => {
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) {
+        setHasConfig(false);
+        setAccessToken("");
+        return;
+      }
 
       if (data) {
         setAccessToken("••••••••••••••••");
         setHasConfig(true);
+      } else {
+        setHasConfig(false);
+        setAccessToken("");
       }
     } catch (e) {
       const message = e instanceof Error ? e.message : "Erro ao carregar configurações";
