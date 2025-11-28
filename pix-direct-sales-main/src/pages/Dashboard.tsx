@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Package, HelpCircle, LogOut, CreditCard, Settings as SettingsIcon, Users, Bell, AlertTriangle } from "lucide-react";
+import { DollarSign, Package, HelpCircle, LogOut, CreditCard, Settings as SettingsIcon, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -47,8 +47,6 @@ const Dashboard = () => {
   const [series, setSeries] = useState<Array<{ date: string; value: number }>>([]);
   const navigate = useNavigate();
   const salesSectionRef = useRef<HTMLDivElement>(null);
-  const [notifications, setNotifications] = useState<Array<{ id: string; type: string; title: string; description?: string; metadata?: Record<string, unknown>; read: boolean; created_at: string }>>([]);
-  const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -64,7 +62,6 @@ const Dashboard = () => {
       }
       setUser(session.user);
       await loadDashboardData(session.user.id);
-      await loadNotifications(session.user.id);
     };
     checkAuth();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
@@ -217,51 +214,6 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="relative inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-muted">
-                  <Bell className={`h-5 w-5 ${unreadCount > 0 ? "animate-bounce" : ""}`} />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1">
-                      <span className="inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] h-5 w-5 shadow-md">
-                        {unreadCount}
-                      </span>
-                    </span>
-                  )}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[340px] p-0">
-                <div className="px-4 py-2 text-sm font-semibold">Notificações</div>
-                <div className="max-h-[320px] overflow-y-auto">
-                  {notifications.length === 0 ? (
-                    <div className="px-4 py-6 text-sm text-muted-foreground">Sem notificações</div>
-                  ) : (
-                    notifications.map((n) => (
-                      <div key={n.id} className={`px-4 py-3 border-t border-border/50 flex items-start gap-3 ${n.read ? "opacity-70" : ""}`} onClick={async () => {
-                        const { data: { session } } = await supabase.auth.getSession();
-                        if (!session) return;
-                        setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x));
-                        await supabase.from("notifications").update({ read: true }).eq("id", n.id).eq("user_id", session.user.id);
-                      }}>
-                        <div className="mt-0.5">
-                          {n.type === "sale" ? (
-                            <DollarSign className="h-4 w-4 text-success" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-destructive" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium">{n.title}</div>
-                          {n.description && <div className="text-xs text-muted-foreground">{n.description}</div>}
-                          <div className="text-[10px] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleString()}</div>
-                        </div>
-                        {!n.read && <span className="mt-1 h-2 w-2 rounded-full bg-primary" />}
-                      </div>
-                    ))
-                  )}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
             <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/settings")} className="gap-2 hidden md:flex">
               <CreditCard className="h-4 w-4" />
               Pagamentos
@@ -502,62 +454,3 @@ export default Dashboard;
 const SUPABASE_CONFIGURED = Boolean(
   import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 );
-  const loadNotifications = async (userId: string) => {
-    const { data } = await supabase
-      .from("notifications")
-      .select("id,type,title,description,metadata,read,created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-    setNotifications(data || []);
-  };
-
-  useEffect(() => {
-    if (!user) return;
-    const channel = supabase
-      .channel("notifications")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` }, (payload: any) => {
-        const n = payload.new as { id: string; type: string; title: string; description?: string; metadata?: Record<string, unknown>; read: boolean; created_at: string };
-        setNotifications(prev => [n, ...prev]);
-        toast.success(n.title);
-      })
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` }, (payload: any) => {
-        const n = payload.new as { id: string; type: string; title: string; description?: string; metadata?: Record<string, unknown>; read: boolean; created_at: string };
-        setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, ...n } : x));
-      })
-      .subscribe();
-    return () => { try { supabase.removeChannel(channel); } catch {} };
-  }, [user]);
-
-  useEffect(() => {
-    const createWarningIfNeeded = async () => {
-      const info = await getCurrentSubscription();
-      if (!info || !info.expires_at) return;
-      const end = new Date(info.expires_at).getTime();
-      const now = Date.now();
-      const daysLeft = Math.floor((end - now) / (24 * 60 * 60 * 1000));
-      const thresholds = [7, 3, 1];
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      for (const d of thresholds) {
-        if (daysLeft === d) {
-          const code = `subscription-${d}d`;
-          const { data: exists } = await supabase
-            .from("notifications")
-            .select("id")
-            .eq("user_id", session.user.id)
-            .eq("type", "subscription_warning")
-            .contains("metadata", { code });
-          if (!exists || exists.length === 0) {
-            await supabase.from("notifications").insert({
-              user_id: session.user.id,
-              type: "subscription_warning",
-              title: d === 1 ? "Assinatura expira amanhã" : `Assinatura expira em ${d} dias`,
-              description: "Renove para manter acesso a vendas e membros.",
-              metadata: { code, days_left: d },
-            });
-          }
-        }
-      }
-    };
-    createWarningIfNeeded();
-  }, [user]);
