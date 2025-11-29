@@ -8,7 +8,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white overflow-x-hidden">
-      <header className="w-full sticky top-0 z-40 bg-transparent">
+      <header className="w-full sticky top-0 z-40 site-header">
         <div className="mx-auto max-w-6xl px-4 py-3">
           <nav className="flex items-center justify-between rounded-full bg-[#1F1F1F] border border-white/10 shadow-[0_2px_0_rgba(0,0,0,0.6)] px-3 py-2">
             <div className="px-4 py-2">
@@ -36,7 +36,7 @@ const Index = () => {
         <section className="relative overflow-hidden pt-20 md:pt-24 pb-16 checkerboard-hero">
           <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[#8A2BE2]/25 blur-[110px] z-0"></div>
           <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#5E2DBE]/25 blur-[110px] z-0"></div>
-          <div className="absolute left-0 right-0 bottom-0 top-16 glass-hero z-10"></div>
+          <div className="absolute inset-0 glass-hero z-10"></div>
           <div className="absolute inset-0 checkerboard-hero-overlay z-15"></div>
 
           <div className="mx-auto max-w-6xl px-4 relative z-20">
