@@ -36,7 +36,7 @@ const Index = () => {
         <section className="relative overflow-hidden pt-20 md:pt-24 pb-16 checkerboard-hero">
           <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[#8A2BE2]/25 blur-[110px] z-0"></div>
           <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#5E2DBE]/25 blur-[110px] z-0"></div>
-          <div className="absolute inset-0 glass-hero z-10"></div>
+          <div className="absolute left-0 right-0 bottom-0 top-16 glass-hero z-10"></div>
           <div className="absolute inset-0 checkerboard-hero-overlay z-15"></div>
 
           <div className="mx-auto max-w-6xl px-4 relative z-20">
