@@ -368,51 +368,51 @@ const Dashboard = () => {
           <span className="text-xl">☰</span>
         </button>
         <Button 
-          variant="ghost"
-          className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2"
+          variant="ghost" 
+          className={`justify-start ${desktopSidebarCollapsed ? "gap-2" : "gap-3"} bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2 transition-all duration-300`}
           onClick={() => navigate("/dashboard")}
         >
-          <Package className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span className="text-foreground">Produtos</span>}
+          <Package className={`${desktopSidebarCollapsed ? "h-4 w-4" : "h-5 w-5"} transition-all duration-300`} /> {desktopSidebarCollapsed ? null : <span className="text-foreground text-[1.2rem] transition-all duration-300">Produtos</span>}
         </Button>
         {!desktopSidebarCollapsed && (
           <div className="pl-6 flex flex-col gap-2">
             <Button 
               variant="ghost" 
-              className="justify-start bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-9 px-2"
+              className="justify-start bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-9 px-2 transition-all duration-300"
               onClick={() => navigate("/dashboard/new-product")}
             >
-              <span className="text-foreground">Criar Produto</span>
+              <span className="text-foreground text-[1.2rem] transition-all duration-300">Criar Produto</span>
             </Button>
             <Button 
               variant="ghost" 
-              className="justify-start bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-9 px-2"
+              className="justify-start bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-9 px-2 transition-all duration-300"
               onClick={() => navigate("/dashboard/products")}
             >
-              <span className="text-foreground">Produtos Criados</span>
+              <span className="text-foreground text-[1.2rem] transition-all duration-300">Produtos Criados</span>
             </Button>
           </div>
         )}
         <Button 
           variant="ghost" 
-          className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2"
+          className={`justify-start ${desktopSidebarCollapsed ? "gap-2" : "gap-3"} bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2 transition-all duration-300`}
           onClick={handleGoToSales}
         >
-          <DollarSign className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span className="text-foreground">Vendas</span>}
+          <DollarSign className={`${desktopSidebarCollapsed ? "h-4 w-4" : "h-5 w-5"} transition-all duration-300`} /> {desktopSidebarCollapsed ? null : <span className="text-foreground text-[1.2rem] transition-all duration-300">Vendas</span>}
         </Button>
         <Button 
           variant="ghost" 
-          className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2"
+          className={`justify-start ${desktopSidebarCollapsed ? "gap-2" : "gap-3"} bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2 transition-all duration-300`}
           onClick={() => navigate("/dashboard/settings")}
         >
-          <CreditCard className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span className="text-foreground">Pagamentos</span>}
+          <CreditCard className={`${desktopSidebarCollapsed ? "h-4 w-4" : "h-5 w-5"} transition-all duration-300`} /> {desktopSidebarCollapsed ? null : <span className="text-foreground text-[1.2rem] transition-all duration-300">Pagamentos</span>}
         </Button>
         {!desktopSidebarCollapsed && (
           <Button
             variant="ghost"
-            className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2 text-foreground"
+            className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2 text-foreground transition-all duration-300"
             onClick={() => navigate("/dashboard/subscription")}
           >
-            Upgrade
+            <span className="text-[1.2rem] transition-all duration-300">Upgrade</span>
           </Button>
         )}
       </aside>
@@ -427,28 +427,28 @@ const Dashboard = () => {
         className={`md:hidden fixed left-0 top-0 h-screen bg-card border-r border-border/50 pt-16 transition-[width] duration-300 ease-out overflow-hidden z-30 ${mobileSidebarExpanded ? "w-[220px]" : "w-[64px]"}`}
       >
         <nav className="flex flex-col gap-2 px-3">
-          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard"); setMobileSidebarExpanded(false); }}>
-            <Package className="h-5 w-5" />
-            {mobileSidebarExpanded && <span>Produtos</span>}
+          <Button variant="ghost" className={`justify-start h-12 px-2 ${mobileSidebarExpanded ? "gap-4" : "gap-3"} transition-all duration-300`} onClick={() => { navigate("/dashboard"); setMobileSidebarExpanded(false); }}>
+            <Package className={`${mobileSidebarExpanded ? "h-6 w-6" : "h-5 w-5"} transition-all duration-300`} />
+            {mobileSidebarExpanded && <span className="text-[1.2rem] transition-all duration-300">Produtos</span>}
           </Button>
-          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/products"); setMobileSidebarExpanded(false); }}>
-            <Package className="h-5 w-5" />
-            {mobileSidebarExpanded && <span>Produtos Criados</span>}
+          <Button variant="ghost" className={`justify-start h-12 px-2 ${mobileSidebarExpanded ? "gap-4" : "gap-3"} transition-all duration-300`} onClick={() => { navigate("/dashboard/products"); setMobileSidebarExpanded(false); }}>
+            <Package className={`${mobileSidebarExpanded ? "h-6 w-6" : "h-5 w-5"} transition-all duration-300`} />
+            {mobileSidebarExpanded && <span className="text-[1.2rem] transition-all duration-300">Produtos Criados</span>}
           </Button>
-          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/new-product"); setMobileSidebarExpanded(false); }}>
-            <Package className="h-5 w-5" />
-            {mobileSidebarExpanded && <span>Criar Produto</span>}
+          <Button variant="ghost" className={`justify-start h-12 px-2 ${mobileSidebarExpanded ? "gap-4" : "gap-3"} transition-all duration-300`} onClick={() => { navigate("/dashboard/new-product"); setMobileSidebarExpanded(false); }}>
+            <Package className={`${mobileSidebarExpanded ? "h-6 w-6" : "h-5 w-5"} transition-all duration-300`} />
+            {mobileSidebarExpanded && <span className="text-[1.2rem] transition-all duration-300">Criar Produto</span>}
           </Button>
-          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { handleGoToSales(); setMobileSidebarExpanded(false); }}>
-            <DollarSign className="h-5 w-5" />
-            {mobileSidebarExpanded && <span>Vendas</span>}
+          <Button variant="ghost" className={`justify-start h-12 px-2 ${mobileSidebarExpanded ? "gap-4" : "gap-3"} transition-all duration-300`} onClick={() => { handleGoToSales(); setMobileSidebarExpanded(false); }}>
+            <DollarSign className={`${mobileSidebarExpanded ? "h-6 w-6" : "h-5 w-5"} transition-all duration-300`} />
+            {mobileSidebarExpanded && <span className="text-[1.2rem] transition-all duration-300">Vendas</span>}
           </Button>
-          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/settings"); setMobileSidebarExpanded(false); }}>
-            <CreditCard className="h-5 w-5" />
-            {mobileSidebarExpanded && <span>Pagamentos</span>}
+          <Button variant="ghost" className={`justify-start h-12 px-2 ${mobileSidebarExpanded ? "gap-4" : "gap-3"} transition-all duration-300`} onClick={() => { navigate("/dashboard/settings"); setMobileSidebarExpanded(false); }}>
+            <CreditCard className={`${mobileSidebarExpanded ? "h-6 w-6" : "h-5 w-5"} transition-all duration-300`} />
+            {mobileSidebarExpanded && <span className="text-[1.2rem] transition-all duration-300">Pagamentos</span>}
           </Button>
-          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/subscription"); setMobileSidebarExpanded(false); }}>
-            {mobileSidebarExpanded && <span>Upgrade</span>}
+          <Button variant="ghost" className={`justify-start h-12 px-2 ${mobileSidebarExpanded ? "gap-4" : "gap-3"} transition-all duration-300`} onClick={() => { navigate("/dashboard/subscription"); setMobileSidebarExpanded(false); }}>
+            {mobileSidebarExpanded && <span className="text-[1.2rem] transition-all duration-300">Upgrade</span>}
           </Button>
         </nav>
       </aside>
