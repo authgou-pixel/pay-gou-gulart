@@ -140,42 +140,6 @@ All colors MUST be HSL.
     background-position: 0 0, 12px 12px;
   }
 
-  .checkerboard-hero {
-    background-color: hsl(var(--background));
-    background-image:
-      repeating-linear-gradient(0deg,
-        transparent 0,
-        transparent calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) 96px
-      ),
-      repeating-linear-gradient(90deg,
-        transparent 0,
-        transparent calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) 96px
-      );
-    background-position: 0 12px, 12px 0;
-  }
-
-  .checkerboard-hero-overlay {
-    pointer-events: none;
-    background-image:
-      repeating-linear-gradient(0deg,
-        transparent 0,
-        transparent calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) 96px
-      ),
-      repeating-linear-gradient(90deg,
-        transparent 0,
-        transparent calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) calc(96px - 1px),
-        hsl(270 80% 65% / 0.12) 96px
-      );
-    background-position: 0 12px, 12px 0;
-  }
-
   .glass-pane {
     background: linear-gradient(180deg, hsl(0 0% 100% / 0.06), hsl(0 0% 100% / 0.02));
     border: 1px solid hsl(0 0% 100% / 0.10);
@@ -221,11 +185,30 @@ html, body {
   position: relative;
 }
 
-.payment-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(135deg, hsl(0 0% 100% / 0.04) 0px, hsl(0 0% 100% / 0.04) 2px, transparent 2px, transparent 10px);
-  pointer-events: none;
-}
+  .payment-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(135deg, hsl(0 0% 100% / 0.04) 0px, hsl(0 0% 100% / 0.04) 2px, transparent 2px, transparent 10px);
+    pointer-events: none;
+  }
+
+  .page-clean-bg {
+    background-image: linear-gradient(180deg, #FAFAFB 0%, #F5F6FB 50%, #F3F4F6 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  .btn-register {
+    background-color: #8A2BE2;
+    color: #FFFFFF;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease, outline-color 0.3s ease, border-color 0.3s ease;
+  }
+  .btn-register:hover { background-color: #742FD6; }
+  .btn-register:focus-visible { outline: 2px solid #B392F5; outline-offset: 2px; }
+  .btn-register:active { filter: brightness(95%); transform: translateY(0.5px); }
 }

@@ -7,7 +7,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#1A1A1A] text-white overflow-x-hidden">
+    <div className="min-h-screen page-clean-bg text-[#111111] overflow-x-hidden">
       <header className="w-full sticky top-0 z-40 bg-transparent">
         <div className="mx-auto max-w-6xl px-4 py-3">
           <nav className="flex items-center justify-between rounded-full bg-[#1F1F1F] border border-white/10 shadow-[0_2px_0_rgba(0,0,0,0.6)]">
@@ -18,7 +18,7 @@ const Index = () => {
               <button onClick={() => navigate("/auth")} className="px-4 py-2 rounded-full text-[#CFCFCF] hover:text-white transition">
                 Login
               </button>
-              <Button className="rounded-full bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-semibold px-4 py-2" onClick={() => navigate("/auth?signup=1")}> 
+              <Button className="btn-register font-semibold" onClick={() => navigate("/auth?signup=1")}> 
                 Cadastre-se
               </Button>
             </div>
