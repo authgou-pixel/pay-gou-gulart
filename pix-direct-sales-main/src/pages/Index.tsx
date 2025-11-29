@@ -36,9 +36,11 @@ const Index = () => {
           <div className="mx-auto max-w-6xl px-4 relative z-20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
               <div className="order-1 md:order-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#232323]/80 border border-[#8A2BE2]/30 text-[#CFCFCF] mb-6">
-                  <div className="h-2 w-2 rounded-full bg-[#8A2BE2]"></div>
-                  <span>Plataforma em crescimento</span>
+                <div className="mobile-pill-center md:mb-6">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#232323]/80 border border-[#8A2BE2]/30 text-[#CFCFCF] growth-pill">
+                    <div className="h-2 w-2 rounded-full bg-[#8A2BE2]"></div>
+                    <span>Plataforma em crescimento</span>
+                  </div>
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
                   <span className="block">Venda mais. Receba direto. Sem taxas.</span>
