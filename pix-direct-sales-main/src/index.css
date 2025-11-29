@@ -140,6 +140,42 @@ All colors MUST be HSL.
     background-position: 0 0, 12px 12px;
   }
 
+  .checkerboard-hero {
+    background-color: hsl(var(--background));
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent 0,
+        transparent calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) 96px
+      ),
+      repeating-linear-gradient(90deg,
+        transparent 0,
+        transparent calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) 96px
+      );
+    background-position: 0 12px, 12px 0;
+  }
+
+  .checkerboard-hero-overlay {
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent 0,
+        transparent calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) 96px
+      ),
+      repeating-linear-gradient(90deg,
+        transparent 0,
+        transparent calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) calc(96px - 1px),
+        hsl(270 80% 65% / 0.12) 96px
+      );
+    background-position: 0 12px, 12px 0;
+  }
+
   .glass-pane {
     background: linear-gradient(180deg, hsl(0 0% 100% / 0.06), hsl(0 0% 100% / 0.02));
     border: 1px solid hsl(0 0% 100% / 0.10);

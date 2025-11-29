@@ -28,10 +28,11 @@ const Index = () => {
       </header>
 
       <main>
-        <section className="relative overflow-hidden pt-24 md:pt-28 pb-12 md:pb-16">
+        <section className="relative overflow-hidden pt-24 md:pt-28 pb-12 md:pb-16 checkerboard-hero">
           <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[#8A2BE2]/20 blur-[100px] z-0"></div>
           <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[#5E2DBE]/20 blur-[100px] z-0"></div>
           <div className="absolute inset-0 glass-hero z-10"></div>
+          <div className="absolute inset-0 checkerboard-hero-overlay z-15"></div>
           <div className="mx-auto max-w-6xl px-4 text-center relative z-20">
             <img
               src="https://i.imgur.com/ycRB6A5.png"
