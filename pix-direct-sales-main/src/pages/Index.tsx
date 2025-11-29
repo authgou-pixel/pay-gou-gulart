@@ -46,12 +46,12 @@ const Index = () => {
                 <p className="text-lg md:text-xl text-[#CFCFCF] mt-6 max-w-xl">
                   Uma plataforma feita para quem quer alta conversão, aprovação automática e saque imediato direto no banco, sem depender da plataforma.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                <div className="mt-8 hidden md:flex flex-col sm:flex-row gap-4">
                   <Button className="bg-gradient-to-r from-[#8A2BE2] to-[#D34FE2] text-black font-semibold hover:opacity-90 px-6 py-6 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8A2BE2] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A] active:scale-[0.99] transition" onClick={() => navigate("/auth?signup=1")}>
                     Começar gratuitamente
                   </Button>
                 </div>
-                <div className="mt-8 flex items-center gap-6 text-[#AFAFAF]">
+                <div className="mt-8 hidden md:flex items-center gap-6 text-[#AFAFAF]">
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4 text-[#8A2BE2]" /> Pagamentos seguros
                   </div>
@@ -69,6 +69,19 @@ const Index = () => {
                   </div>
                 </div>
                 <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full h-auto rounded-xl shadow-none md:scale-[1.2] transform-gpu origin-center" loading="lazy" referrerPolicy="no-referrer" />
+                <div className="mt-6 flex md:hidden flex-col gap-4 items-stretch">
+                  <Button className="bg-gradient-to-r from-[#8A2BE2] to-[#D34FE2] text-black font-semibold hover:opacity-90 px-6 py-6 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8A2BE2] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A] active:scale-[0.99] transition" onClick={() => navigate("/auth?signup=1")}>
+                    Começar gratuitamente
+                  </Button>
+                  <div className="flex items-center justify-center gap-8 text-[#AFAFAF]">
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-[#8A2BE2]" /> Pagamentos seguros
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RefreshCcw className="h-4 w-4 text-[#8A2BE2]" /> 99.9% uptime
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
