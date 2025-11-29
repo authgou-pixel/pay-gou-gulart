@@ -20,7 +20,7 @@ const Subscription = () => {
   const [paymentId, setPaymentId] = useState<string>("");
   const [copied, setCopied] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "trial">("monthly");
-  const enableTrial = false;
+  const enableTrial = true;
 
   useEffect(() => {
     const init = async () => {
@@ -193,6 +193,12 @@ const Subscription = () => {
                       <Button variant="outline" className="w-full" onClick={() => { setSelectedPlan("trial"); handleCreate(); }}>Plano de Teste (R$ 2,00 / 5 min)</Button>
                     )}
                   </div>
+                  {enableTrial && (
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      <p>Plano de teste válido por 5 minutos. Ideal para avaliar a plataforma.</p>
+                      <p>Preço: R$ 2,00. Acesso temporário liberado após confirmação do PIX.</p>
+                    </div>
+                  )}
                 </>
               )}
               {qrCode && (
