@@ -232,4 +232,18 @@ html, body {
   .btn-register:hover { background-color: #742FD6; }
   .btn-register:focus-visible { outline: 2px solid #B392F5; outline-offset: 2px; }
   .btn-register:active { filter: brightness(95%); transform: translateY(0.5px); }
+
+  @keyframes sales-bounce {
+    0%, 24%, 100% { transform: translateY(0); }
+    12% { transform: translateY(-8px); }
+  }
+
+  .sales-bounce {
+    animation: sales-bounce 2.5s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sales-bounce { animation: none; }
+  }
 }

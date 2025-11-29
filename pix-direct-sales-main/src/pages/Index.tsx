@@ -67,14 +67,14 @@ const Index = () => {
                 </div>
               </div>
               <div className="order-1 md:order-2 relative">
-                <div className="absolute left-8 top-0 md:left-16 md:-top-6 z-20">
-                  <div className="rounded-xl bg-[#232323]/90 border border-white/10 shadow-xl px-4 py-3">
+                <div className="absolute left-8 top-0 md:left-16 md:-top-6 z-20 sales-bounce">
+                  <div className="rounded-xl bg-[#232323]/90 border border-white/10 shadow-xl px-5 py-4 md:scale-[1.18]">
                     <div className="text-xs text-[#9A9A9A]">Vendas hoje</div>
-                    <div className="mt-1 text-2xl font-bold">R$ 12.450</div>
+                    <div className="mt-1 text-3xl font-bold">R$ 12.450</div>
                     <div className="mt-1 text-xs text-[#9A9A9A]">+23.5%</div>
                   </div>
                 </div>
-                <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-2xl md:max-w-full h-auto rounded-xl shadow-2xl" loading="lazy" referrerPolicy="no-referrer" />
+                <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full h-auto rounded-xl shadow-none md:scale-[1.2] transform-gpu origin-center" loading="lazy" referrerPolicy="no-referrer" />
               </div>
             </div>
           </div>
