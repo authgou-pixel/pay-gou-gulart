@@ -7,10 +7,10 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen page-clean-bg text-[#111111] overflow-x-hidden">
+    <div className="min-h-screen bg-[#1A1A1A] text-white overflow-x-hidden">
       <header className="w-full sticky top-0 z-40 bg-transparent">
         <div className="mx-auto max-w-6xl px-4 py-3">
-          <nav className="flex items-center justify-between rounded-full bg-[#1F1F1F] border border-white/10 shadow-[0_2px_0_rgba(0,0,0,0.6)]">
+          <nav className="flex items-center justify-between">
             <div className="px-4 py-2">
               <span className="text-white text-xl font-semibold tracking-wide">GouPay</span>
             </div>
