@@ -14,12 +14,6 @@ const Index = () => {
             <div className="px-4 py-2">
               <span className="text-white text-xl font-semibold tracking-wide">GouPay</span>
             </div>
-            <div className="hidden md:flex items-center gap-2">
-              <span className="px-3 py-2 rounded-full bg-[#2A2A2A] text-[#D9D9D9] text-sm">Início</span>
-              <span className="px-3 py-2 rounded-full bg-[#2A2A2A] text-[#D9D9D9] text-sm">Newsletter</span>
-              <span className="px-3 py-2 rounded-full bg-[#2A2A2A] text-[#D9D9D9] text-sm">Suporte</span>
-              <span className="px-3 py-2 rounded-full bg-[#2A2A2A] text-[#D9D9D9] text-sm">Sobre nós</span>
-            </div>
             <div className="flex items-center gap-2 px-2">
               <button onClick={() => navigate("/auth")} className="px-4 py-2 rounded-full text-[#CFCFCF] hover:text-white transition">
                 Login
