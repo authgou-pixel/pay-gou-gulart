@@ -8,7 +8,7 @@ import { DollarSign, Package, HelpCircle, LogOut, CreditCard, Settings as Settin
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { filterByTimeframe, Timeframe, aggregateSeries } from "@/utils/dashboard";
 import { getCurrentSubscription, isSubscriptionActive, markExpiredIfNeeded } from "@/utils/subscription";
 
@@ -189,6 +189,21 @@ const Dashboard = () => {
     navigate("/dashboard/sales");
   };
   const pieColor = "#8A2BE2";
+  const formatXAxis = (value: string) => {
+    if (!value) return value;
+    if (timeframe === "monthly") {
+      const [y, m] = value.split("-");
+      const d = new Date(Number(y), Number(m) - 1, 1);
+      return d.toLocaleDateString("pt-BR", { month: "short" });
+    }
+    try {
+      const d = new Date(value);
+      return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+    } catch {
+      return value;
+    }
+  };
+  const formatCurrency = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const [mobileSidebarExpanded, setMobileSidebarExpanded] = useState<boolean>(false);
   const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState<boolean>(false);
 
@@ -298,23 +313,14 @@ const Dashboard = () => {
               <div className="h-full w-full animate-pulse rounded bg-muted" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Tooltip formatter={(value, name) => [Number(value), name]} />
-                  <Pie
-                    data={series.map((s) => ({ name: s.date, value: s.value }))}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={115}
-                    labelLine={false}
-                  >
-                    {series.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={pieColor} stroke="#ffffff20" />
-                    ))}
-                  </Pie>
-                </PieChart>
+                <LineChart data={series} margin={{ top: 8, right: 16, left: 24, bottom: 8 }}>
+                  <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tickFormatter={formatXAxis} tick={{ fill: "#9CA3AF", fontSize: 12 }} />
+                  <YAxis tickFormatter={formatCurrency} tick={{ fill: "#9CA3AF", fontSize: 12 }} width={72} />
+                  <Tooltip formatter={(value: number) => formatCurrency(Number(value))} labelFormatter={(v) => String(formatXAxis(String(v)))} />
+                  <Legend />
+                  <Line type="linear" dataKey="value" name="Total de vendas" stroke="#800080" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} style={{ filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.15))" }} />
+                </LineChart>
               </ResponsiveContainer>
             )}
           </CardContent>
