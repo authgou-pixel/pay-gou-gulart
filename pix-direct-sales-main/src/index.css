@@ -163,9 +163,9 @@ All colors MUST be HSL.
 .glass-hero {
   pointer-events: none;
   background:
-    linear-gradient(180deg, hsl(270 80% 65% / 0.06) 0%, hsl(0 0% 0% / 0.22) 40%, hsl(0 0% 0% / 0.30) 100%),
+    linear-gradient(180deg, hsl(270 80% 65% / 0.06) 0%, hsl(0 0% 0% / 0.12) 42%, hsl(0 0% 0% / 0.18) 100%),
     radial-gradient(1100px 420px at 50% 12%, hsl(270 80% 65% / 0.10) 0%, transparent 60%),
-    radial-gradient(900px 320px at 50% 100%, hsl(270 80% 40% / 0.18) 0%, transparent 70%);
+    radial-gradient(900px 320px at 50% 100%, hsl(270 80% 40% / 0.14) 0%, transparent 70%);
   backdrop-filter: blur(10px) saturate(1.12);
   -webkit-backdrop-filter: blur(12px) saturate(1.15);
   border-top: 1px solid hsl(0 0% 100% / 0.05);
@@ -174,6 +174,16 @@ All colors MUST be HSL.
     inset 0 -40px 80px hsl(0 0% 0% / 0.45),
     inset 0 30px 60px hsl(0 0% 0% / 0.35),
     0 20px 60px hsl(0 0% 0% / 0.25);
+}
+
+/* Transparent capsule header */
+.header-glass {
+  background: hsl(0 0% 8% / 0.65);
+  border: 1px solid hsl(0 0% 100% / 0.08);
+  border-radius: 9999px;
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow: 0 2px 0 hsl(0 0% 0% / 0.6), inset 0 1px 0 hsl(0 0% 100% / 0.06);
 }
 
 html, body {
