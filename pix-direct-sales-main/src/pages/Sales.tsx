@@ -12,6 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Check, Clock, Menu, ChevronLeft, CalendarRange, CheckCircle2, FileJson, FileText } from "lucide-react";
 
+export async function setSaleStatus(client: any, saleId: string, toStatus: string, userId: string) {
+  const status = (toStatus || "").toUpperCase();
+  const q1 = client.from("sales").update({ payment_status: status }).eq("id", saleId).eq("seller_id", userId);
+  const { error } = await q1;
+  if (error) throw error;
+  return status;
+}
+
 type Sale = {
   id: string;
   amount: number;
@@ -150,17 +158,17 @@ const Sales = () => {
   const updateStatus = async (sale: Sale, toStatus: string) => {
     const fromStatus = sale.payment_status || "";
     try {
-      const { error } = await supabase
-        .from("sales")
-        .update({ payment_status: toStatus })
-        .eq("id", sale.id);
-      if (error) throw error;
-      setSales((prev) => prev.map((s) => s.id === sale.id ? { ...s, payment_status: toStatus } : s));
+      const { data: { session } } = await supabase.auth.getSession();
+      const uid = session?.user?.id;
+      if (!uid) throw new Error("Usuário não autenticado");
+      const status = await setSaleStatus(supabase, sale.id, toStatus, uid);
+      setSales((prev) => prev.map((s) => s.id === sale.id ? { ...s, payment_status: status } : s));
       pushHistory(sale.id, fromStatus, toStatus);
-      toast.success("Status atualizado");
+      toast.success("Status atualizado para " + status);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Falha ao atualizar status";
-      toast.error(msg);
+      const err = e as { message?: string; code?: string; details?: string; hint?: string };
+      const parts = [err.message, err.code, err.details, err.hint].filter(Boolean);
+      toast.error(parts.join(" — ") || "Falha ao atualizar status");
     }
   };
 
