@@ -359,7 +359,7 @@ const Dashboard = () => {
         </Card>
         </div>
       </main>
-      <aside className={`hidden md:flex fixed left-0 top-0 h-screen bg-transparent p-4 flex-col gap-3 transition-[width] duration-300 ease-out ${desktopSidebarCollapsed ? "w-[64px]" : "w-[250px]"}`}>
+      <aside data-ui="ascent-sidebar" className={`hidden md:flex fixed left-0 top-0 h-screen bg-transparent p-4 flex-col gap-3 transition-[width] duration-300 ease-out ${desktopSidebarCollapsed ? "w-[64px]" : "w-[250px]"}`}>
         <button
           aria-label="Alternar menu"
           className="hidden md:flex h-10 w-10 items-center justify-center rounded-md bg-card border border-border/60 mb-2"
@@ -423,7 +423,7 @@ const Dashboard = () => {
       >
         <span className="text-xl">☰</span>
       </button>
-      <aside
+      <aside data-ui="ascent-sidebar"
         className={`md:hidden fixed left-0 top-0 h-screen bg-card border-r border-border/50 pt-16 transition-[width] duration-300 ease-out overflow-hidden z-30 ${mobileSidebarExpanded ? "w-[220px]" : "w-[64px]"}`}
       >
         <nav className="flex flex-col gap-2 px-3">
