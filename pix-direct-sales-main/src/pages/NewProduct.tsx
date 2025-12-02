@@ -71,6 +71,7 @@ const NewProduct = () => {
         description: formData.description,
         price: parseFloat(formData.price),
         content_type: formData.content_type,
+        content_url: "",
         is_active: true,
         // opcional: imagem do produto, requer coluna image_url no schema
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -86,6 +87,7 @@ const NewProduct = () => {
           description: formData.description,
           price: parseFloat(formData.price),
           content_type: formData.content_type,
+          content_url: "",
           is_active: true,
         });
         if (retry.error) throw retry.error;
