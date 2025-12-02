@@ -68,7 +68,3791 @@ const Auth = () => {
             if (!loginErr) {
               navigate("/dashboard");
               return;
-            }
+            }BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;BEGIN;
+
+-- Garantir RLS ON
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.memberships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mercado_pago_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
+
+-- Remover políticas amplas que permitem ações para 'authenticated' sem ownership
+DROP POLICY IF EXISTS modules_owner_manage_all ON public.modules;
+DROP POLICY IF EXISTS modules_insert_admin ON public.modules;
+DROP POLICY IF EXISTS modules_update_admin ON public.modules;
+DROP POLICY IF EXISTS modules_delete_admin ON public.modules;
+
+DROP POLICY IF EXISTS products_insert_admin ON public.products;
+DROP POLICY IF EXISTS products_update_admin ON public.products;
+DROP POLICY IF EXISTS products_delete_admin ON public.products;
+
+DROP POLICY IF EXISTS subscriptions_select_admin ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_insert_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_update_owner ON public.subscriptions;
+DROP POLICY IF EXISTS subscriptions_delete_admin ON public.subscriptions;
+
+-- Leitura pública só de produtos ativos
+CREATE POLICY public_select_active_products
+ON public.products FOR SELECT TO public
+USING (is_active = true);
+
+-- Dono vê e gerencia próprios produtos
+CREATE POLICY owner_select_products
+ON public.products FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+CREATE POLICY owner_insert_products
+ON public.products FOR INSERT TO authenticated
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_update_products
+ON public.products FOR UPDATE TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY owner_delete_products
+ON public.products FOR DELETE TO authenticated
+USING (user_id = auth.uid());
+
+-- Sales: apenas SELECT para o vendedor; escritas via service role
+CREATE POLICY seller_select_sales
+ON public.sales FOR SELECT TO authenticated
+USING (seller_id = auth.uid());
+
+-- Memberships: comprador enxerga e pode vincular perfil próprio
+CREATE POLICY memberships_select_buyer
+ON public.memberships FOR SELECT TO authenticated
+USING (buyer_user_id = auth.uid() OR buyer_email = (auth.jwt() ->> 'email'));
+
+CREATE POLICY memberships_update_link_profile
+ON public.memberships FOR UPDATE TO authenticated
+USING (buyer_email = (auth.jwt() ->> 'email'))
+WITH CHECK (buyer_user_id = auth.uid());
+
+-- Subscriptions: dono vê própria assinatura; UPDATE/INSERT só via service role
+CREATE POLICY owner_select_subscriptions
+ON public.subscriptions FOR SELECT TO authenticated
+USING (user_id = auth.uid());
+
+-- Mercado Pago config: somente dono pode CRUD
+CREATE POLICY owner_manage_mp_config
+ON public.mercado_pago_config FOR ALL TO authenticated
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- Profiles: dono vê/atualiza o próprio
+CREATE POLICY owner_select_profile
+ON public.profiles FOR SELECT TO authenticated
+USING (id = auth.uid());
+
+CREATE POLICY owner_update_profile
+ON public.profiles FOR UPDATE TO authenticated
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
+
+COMMIT;
           } catch { void 0 }
           setIsLogin(true);
         }

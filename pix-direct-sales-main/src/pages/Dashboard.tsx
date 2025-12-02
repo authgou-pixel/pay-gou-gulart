@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "@/styles/ascent-dashboard.css";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -216,7 +217,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden" data-ui="ascent-dashboard">
       <div className="w-full bg-card/80 border-b border-border/50 z-20">
         <div className={`mx-auto max-w-6xl py-4 flex items-center justify-between px-4 md:px-6 ${mobileSidebarExpanded ? "pl-[232px]" : "pl-[76px]"} ${desktopSidebarCollapsed ? "md:pl-[80px]" : "md:pl-[250px]"}`}>
           <div className="flex items-center gap-4">
@@ -258,7 +259,7 @@ const Dashboard = () => {
         </div>
       </div>
       <main className={`mx-auto max-w-6xl px-4 md:px-6 py-6 ${desktopSidebarCollapsed ? "md:pl-[80px]" : "md:pl-[250px]"} ${mobileSidebarExpanded ? "pl-[232px]" : "pl-[76px]"}`}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" data-dashboard="stats">
           <Card className="bg-card border rounded-xl">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
@@ -299,7 +300,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        <Card className="mb-8">
+        <Card className="mb-8" data-dashboard="chart">
           <CardHeader className="flex justify-between items-center">
             <CardTitle className="text-sm">Estatísticas de Vendas</CardTitle>
             <div className="flex gap-2">

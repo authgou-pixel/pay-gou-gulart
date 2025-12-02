@@ -1,0 +1,65 @@
+:root {
+  --ascent-primary: 270 80% 65%;
+  --ascent-secondary: 270 20% 15%;
+  --ascent-surface: 0 0% 10%;
+  --ascent-border: 0 0% 20%;
+  --ascent-text: 0 0% 95%;
+  --ascent-purple-glow: 270 80% 65%;
+  --ascent-orange: 30 95% 55%;
+}
+
+[data-ui="ascent-dashboard"] {
+  color: hsl(var(--ascent-text));
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="stats"] > .rounded-xl {
+  background: linear-gradient(180deg, hsl(0 0% 12%), hsl(0 0% 9%));
+  border: 1px solid hsl(0 0% 20% / 0.6);
+  border-radius: 18px;
+  box-shadow: 0 12px 24px hsl(0 0% 0% / 0.35), inset 0 1px 0 hsl(0 0% 100% / 0.06);
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="stats"] > .rounded-xl:hover {
+  box-shadow: 0 14px 30px hsl(0 0% 0% / 0.45);
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="stats"] > .rounded-xl:nth-child(3) {
+  box-shadow: 0 0 0 1px hsl(var(--ascent-purple-glow) / 0.35), 0 0 40px hsl(var(--ascent-purple-glow) / 0.25);
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="stats"] .text-sm.font-semibold {
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="chart"] {
+  background: linear-gradient(180deg, hsl(0 0% 12%), hsl(0 0% 9%));
+  border: 1px solid hsl(0 0% 20% / 0.6);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px hsl(0 0% 0% / 0.35), inset 0 1px 0 hsl(0 0% 100% / 0.06);
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="chart"] .recharts-cartesian-grid line {
+  stroke: hsl(0 0% 60% / 0.25) !important;
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="chart"] .recharts-line path {
+  stroke: hsl(var(--ascent-orange)) !important;
+  filter: drop-shadow(0 2px 6px hsl(var(--ascent-orange) / 0.35));
+}
+
+[data-ui="ascent-dashboard"] [data-dashboard="chart"] .recharts-default-tooltip {
+  background: hsl(0 0% 12% / 0.95) !important;
+  border: 1px solid hsl(0 0% 20% / 0.6) !important;
+  border-radius: 12px !important;
+  color: hsl(var(--ascent-text)) !important;
+}
+
+@media (max-width: 768px) {
+  [data-ui="ascent-dashboard"] [data-dashboard="stats"] > .rounded-xl {
+    border-radius: 16px;
+  }
+  [data-ui="ascent-dashboard"] [data-dashboard="chart"] {
+    border-radius: 16px;
+  }
+}
