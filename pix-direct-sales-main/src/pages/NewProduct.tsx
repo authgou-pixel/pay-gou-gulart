@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { validateNewProduct } from "@/utils/product_flow";
 
 const NewProduct = () => {
   const navigate = useNavigate();
@@ -18,7 +19,6 @@ const NewProduct = () => {
     description: "",
     price: "",
     content_type: "ebook",
-    content_url: "",
     image_url: "",
   });
 
@@ -62,10 +62,8 @@ const NewProduct = () => {
         return;
       }
 
-      if (!formData.content_url.trim()) {
-        toast.error("Informe a URL do conteúdo");
-        return;
-      }
+      const valid = validateNewProduct({ name: formData.name, description: formData.description, price: formData.price });
+      if (!valid) { toast.error("Preencha nome e preço válidos"); return; }
 
       let { error } = await supabase.from("products").insert({
         user_id: session.user.id,
@@ -73,7 +71,6 @@ const NewProduct = () => {
         description: formData.description,
         price: parseFloat(formData.price),
         content_type: formData.content_type,
-        content_url: formData.content_url,
         is_active: true,
         // opcional: imagem do produto, requer coluna image_url no schema
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -89,7 +86,6 @@ const NewProduct = () => {
           description: formData.description,
           price: parseFloat(formData.price),
           content_type: formData.content_type,
-          content_url: formData.content_url,
           is_active: true,
         });
         if (retry.error) throw retry.error;
@@ -192,17 +188,8 @@ const NewProduct = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content_url">URL do Conteúdo *</Label>
-                <Input
-                  id="content_url"
-                  type="url"
-                  placeholder="https://.../seu-conteudo"
-                  value={formData.content_url}
-                  onChange={(e) => setFormData({ ...formData, content_url: e.target.value })}
-                  required
-                  className="border-primary/20"
-                />
-                <p className="text-sm text-muted-foreground">Informe a URL pública do conteúdo (ex.: link para o arquivo ou vídeo).</p>
+                <Label>Conteúdo</Label>
+                <p className="text-sm text-muted-foreground">Adicione o conteúdo após criar o produto, na tela de edição.</p>
               </div>
 
 

@@ -211,14 +211,21 @@ const ProductManage = () => {
       ...(currentModuleId ? { module_id: currentModuleId } : {}),
     };
 
-    let { error } = await supabase.from("lessons").insert(basePayload);
+    const insert = await supabase.from("lessons").insert(basePayload).select("id").single();
+    let error = insert.error;
     if (error && String(error.message).toLowerCase().includes("module_id")) {
       const { module_id, ...fallbackPayload } = basePayload;
-      const retry = await supabase.from("lessons").insert(fallbackPayload);
+      const retry = await supabase.from("lessons").insert(fallbackPayload).select("id").single();
       error = retry.error;
     }
     if (error) {
+      console.error(error);
       toast.error(error.message || "Erro ao adicionar aula");
+      return;
+    }
+    if (!insert.data?.id) {
+      console.error("Falha ao validar inserção da aula");
+      toast.error("Falha ao salvar aula");
       return;
     }
     setNewLessonTitle("");

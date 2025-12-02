@@ -17,11 +17,30 @@ const LessonView = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasAccess, setHasAccess] = useState<boolean>(false);
 
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
+      try {
+        const email = session.user.email as string;
+        const userId = session.user.id as string;
+        const { data: membership } = await supabase
+          .from("memberships")
+          .select("id,status")
+          .eq("product_id", productId)
+          .or(`buyer_user_id.eq.${userId},buyer_email.eq.${email}`)
+          .maybeSingle();
+        const ok = Boolean(membership && membership.status === "approved");
+        setHasAccess(ok);
+        if (!ok) { setLoading(false); return; }
+      } catch (e) {
+        console.error(e);
+        setHasAccess(false);
+        setLoading(false);
+        return;
+      }
 
       const { data: p } = await supabase.from("products").select("id,name,description").eq("id", productId).maybeSingle();
       setProduct(p || null);
@@ -43,6 +62,14 @@ const LessonView = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="max-w-md"><CardContent className="pt-6"><p className="text-center text-muted-foreground">Acesso restrito ao conteúdo. Verifique sua compra.</p></CardContent></Card>
       </div>
     );
   }
