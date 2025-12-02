@@ -46,10 +46,25 @@ const LessonView = () => {
       setProduct(p || null);
 
       const { data: l } = await supabase.from("lessons").select("*").eq("product_id", productId).order("order_index", { ascending: true });
-      setLessons(l || []);
-
       const { data: m } = await supabase.from("modules").select("*").eq("product_id", productId).order("order_index", { ascending: true });
-      setModules(m || []);
+      if ((l || []).length === 0) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const resp = await fetch('/api/member-lessons', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, buyerEmail: session?.user?.email, buyerUserId: session?.user?.id }),
+          });
+          const json = await resp.json();
+          setLessons(json?.lessons || []);
+          setModules(json?.modules || []);
+        } catch {
+          setLessons([]);
+          setModules([]);
+        }
+      } else {
+        setLessons(l || []);
+        setModules(m || []);
+      }
 
       const current = (l || []).find(x => x.id === lessonId) || null;
       setLesson(current);

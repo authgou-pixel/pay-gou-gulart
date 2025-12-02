@@ -118,12 +118,26 @@ const Members = () => {
               const p = products[m.product_id];
               const ls = (lessons[m.product_id] || []).sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
               const firstLessonId = ls[0]?.id;
-              const handleOpen = () => {
+              const handleOpen = async () => {
                 if (m.status !== 'approved') return;
                 if (firstLessonId) {
                   navigate(`/members/product/${m.product_id}/lesson/${firstLessonId}`);
-                } else {
-                  toast.info('Nenhuma aula cadastrada');
+                  return;
+                }
+                try {
+                  const resp = await fetch('/api/member-lessons', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: m.product_id, buyerEmail }),
+                  });
+                  const data = await resp.json();
+                  const apiFirst = data?.lessons?.[0]?.id;
+                  if (resp.ok && apiFirst) {
+                    navigate(`/members/product/${m.product_id}/lesson/${apiFirst}`);
+                  } else {
+                    toast.info('Nenhuma aula cadastrada');
+                  }
+                } catch {
+                  toast.error('Erro ao carregar aulas');
                 }
               };
               return (
