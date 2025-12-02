@@ -396,6 +396,16 @@ html, body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .members-item { transition: none; }
+.members-item { transition: none; }
+}
+
+/* Auth mobile layout adjustments */
+.auth-wrapper { display: flex; }
+@media (max-width: 480px) {
+  .auth-wrapper { padding-left: 20px; padding-right: 20px; }
+  .auth-card { width: 90%; margin-left: auto; margin-right: auto; }
+}
+@media (max-width: 360px) {
+  .auth-card { width: 95%; }
 }
 }

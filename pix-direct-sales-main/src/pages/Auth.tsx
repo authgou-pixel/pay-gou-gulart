@@ -65,8 +65,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center payment-bg">
-      <Card className="w-full max-w-md bg-card border rounded-xl">
+    <div className="auth-wrapper min-h-screen flex items-center justify-center payment-bg px-5">
+      <Card className="auth-card w-[90%] sm:w-full sm:max-w-md bg-card border rounded-xl">
         <CardHeader>
           <CardTitle className="text-lg">{isLogin ? "Entrar" : "Criar conta"}</CardTitle>
           <CardDescription>Use seu e-mail e senha</CardDescription>
@@ -76,21 +76,21 @@ const Auth = () => {
             {!isLogin && (
               <div className="space-y-2">
                 <Label htmlFor="name">Nome</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="h-11 text-base md:h-10 md:text-sm" />
               </div>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-11 text-base md:h-10 md:text-sm" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="h-11 text-base md:h-10 md:text-sm" />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full h-11 text-base md:h-10 md:text-sm" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLogin ? "Entrar" : "Cadastrar"}
             </Button>
-            <Button type="button" variant="ghost" className="w-full" onClick={() => setIsLogin((v) => !v)}>
+            <Button type="button" variant="ghost" className="w-full h-11 text-base md:h-10 md:text-sm" onClick={() => setIsLogin((v) => !v)}>
               {isLogin ? "Criar conta" : "Já tenho conta"}
             </Button>
           </form>
