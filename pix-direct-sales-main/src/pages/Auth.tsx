@@ -65,7 +65,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center page-clean-bg">
+    <div className="min-h-screen flex items-center justify-center payment-bg">
       <Card className="w-full max-w-md bg-card border rounded-xl">
         <CardHeader>
           <CardTitle className="text-lg">{isLogin ? "Entrar" : "Criar conta"}</CardTitle>
