@@ -118,12 +118,21 @@ const Subscription = () => {
     if (!expiresAt) return;
     const end = new Date(expiresAt).getTime();
     const now = Date.now();
-    const msUntilAlert = end - now - 60_000;
-    if (msUntilAlert <= 0) return;
-    const t = setTimeout(() => {
-      toast.info("Seu plano expira em 1 minuto");
-    }, msUntilAlert);
-    return () => clearTimeout(t);
+    const remaining = end - now;
+    if (remaining <= 0) return;
+
+    let t: number | undefined;
+    if (remaining <= 10 * 60_000) {
+      const ms = remaining - 60_000;
+      if (ms > 0) t = window.setTimeout(() => toast.info("Seu plano expira em 1 minuto"), ms);
+    } else if (remaining >= 24 * 60 * 60_000) {
+      const ms = remaining - 24 * 60 * 60_000;
+      t = window.setTimeout(() => toast.info("Seu plano expira em 24 horas"), ms);
+    } else {
+      const ms = remaining - 60 * 60_000;
+      if (ms > 0) t = window.setTimeout(() => toast.info("Seu plano expira em 1 hora"), ms);
+    }
+    return () => { if (t) clearTimeout(t); };
   }, [expiresAt]);
 
   if (loading) {
