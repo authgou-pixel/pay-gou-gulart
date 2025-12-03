@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-type Product = { id: string; name: string; description: string | null };
+type Product = { id: string; user_id?: string; name: string; description: string | null };
 type Module = { id: string; product_id: string; title: string };
 type Lesson = { id: string; module_id: string | null; title: string; description: string | null; content_type: string | null; content_url: string | null };
 
@@ -23,16 +23,23 @@ const LessonView = () => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
+      let ok = false;
       try {
         const email = session.user.email as string;
         const userId = session.user.id as string;
-        const { data: membership } = await supabase
-          .from("memberships")
-          .select("id,status")
-          .eq("product_id", productId)
-          .or(`buyer_user_id.eq.${userId},buyer_email.eq.${email}`)
-          .maybeSingle();
-        const ok = Boolean(membership && membership.status === "approved");
+        if (isPreview) {
+          const { data: pOwner } = await supabase.from("products").select("user_id").eq("id", productId).maybeSingle();
+          if (pOwner?.user_id && pOwner.user_id === userId) ok = true;
+        }
+        if (!ok) {
+          const { data: membership } = await supabase
+            .from("memberships")
+            .select("id,status")
+            .eq("product_id", productId)
+            .or(`buyer_user_id.eq.${userId},buyer_email.eq.${email}`)
+            .maybeSingle();
+          ok = Boolean(membership && membership.status === "approved");
+        }
         setHasAccess(ok);
         if (!ok) { setLoading(false); return; }
       } catch (e) {
@@ -42,7 +49,7 @@ const LessonView = () => {
         return;
       }
 
-      const { data: p } = await supabase.from("products").select("id,name,description").eq("id", productId).maybeSingle();
+      const { data: p } = await supabase.from("products").select("id,user_id,name,description").eq("id", productId).maybeSingle();
       setProduct(p || null);
 
       const { data: l } = await supabase.from("lessons").select("*").eq("product_id", productId).order("order_index", { ascending: true });
@@ -134,6 +141,11 @@ const LessonView = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {isPreview && (
+          <div className="lg:col-span-3 mb-4">
+            <Button variant="outline" onClick={() => window.history.back()}>Voltar à lista de produtos</Button>
+          </div>
+        )}
         <div className="lg:col-span-2 space-y-4">
           <Card className="border-primary/20">
             <CardHeader>
@@ -200,3 +212,5 @@ const LessonView = () => {
 };
 
 export default LessonView;
+  const params = new URLSearchParams(window.location.search);
+  const isPreview = params.get("preview") === "1";

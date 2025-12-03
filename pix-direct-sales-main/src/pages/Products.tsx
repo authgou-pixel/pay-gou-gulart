@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Pencil } from "lucide-react";
+import { Pencil, Eye } from "lucide-react";
 import { getCurrentSubscription, isSubscriptionActive, markExpiredIfNeeded } from "@/utils/subscription";
 
 type Product = {
@@ -52,6 +52,26 @@ const Products = () => {
     toast.success("Link copiado!");
   };
 
+  const previewProduct = async (productId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { navigate("/auth"); return; }
+      const { data: lessons } = await supabase
+        .from("lessons")
+        .select("id,order_index")
+        .eq("product_id", productId)
+        .order("order_index", { ascending: true });
+      const firstLessonId = (lessons || [])[0]?.id;
+      if (firstLessonId) {
+        navigate(`/members/product/${productId}/lesson/${firstLessonId}?preview=1`);
+      } else {
+        toast.info("Nenhuma aula cadastrada");
+      }
+    } catch {
+      toast.error("Erro ao abrir visualização");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -94,6 +114,9 @@ const Products = () => {
                       <Pencil className="h-4 w-4" /> Editar
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => copyProductLink(p.id)}>Copiar link</Button>
+                    <Button variant="outline" size="sm" onClick={() => previewProduct(p.id)} className="gap-1">
+                      <Eye className="h-4 w-4" /> Exibir
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
