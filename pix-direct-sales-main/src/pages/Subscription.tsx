@@ -115,7 +115,7 @@ const Subscription = () => {
   }, [paymentId, status]);
 
   useEffect(() => {
-    if (!expiresAt || active) return;
+    if (!expiresAt) return;
     const end = new Date(expiresAt).getTime();
     const now = Date.now();
     const remaining = end - now;
@@ -133,7 +133,7 @@ const Subscription = () => {
       if (ms > 0) t = window.setTimeout(() => toast.info("Seu plano expira em 1 hora"), ms);
     }
     return () => { if (t) clearTimeout(t); };
-  }, [expiresAt, active]);
+  }, [expiresAt]);
 
   if (loading) {
     return (
@@ -144,7 +144,7 @@ const Subscription = () => {
   }
 
   const expired = expiresAt ? new Date(expiresAt) <= new Date() : true;
-  const active = (status === "active" || status === "approved") && !expired;
+  const active = status === "active" && !expired;
 
   return (
     <div className="min-h-screen bg-background">
