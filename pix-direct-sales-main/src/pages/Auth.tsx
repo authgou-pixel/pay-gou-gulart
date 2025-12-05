@@ -60,7 +60,7 @@ const Auth = () => {
           try {
             const { error: loginErr } = await supabase.auth.signInWithPassword({ email, password });
             if (!loginErr) navigate("/dashboard");
-          } catch {}
+          } catch (e) { void e; }
         }
       }
     } catch {

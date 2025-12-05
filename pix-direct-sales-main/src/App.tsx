@@ -34,6 +34,7 @@ const LessonView = lazy(() => import("./pages/LessonView"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Subscription = lazy(() => import("./pages/Subscription"));
 const Terms = lazy(() => import("./pages/Terms"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/dashboard/settings" element={<Settings />} />
             <Route path="/dashboard/subscription" element={<Subscription />} />
             <Route path="/dashboard/terms" element={<Terms />} />
+            <Route path="/admin/*" element={<Admin />} />
             <Route path="/dashboard/product/:productId" element={<ProductManage />} />
             <Route path="/members" element={<Members />} />
             <Route path="/members/product/:productId/lesson/:lessonId" element={<LessonView />} />
