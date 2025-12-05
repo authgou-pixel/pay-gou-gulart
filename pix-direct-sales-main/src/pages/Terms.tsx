@@ -17,7 +17,6 @@ const Terms = () => {
             <CardTitle className="flex items-center gap-2"><FileText className="h-6 w-6 text-[#8A2BE2]" /> TERMOS DE USO GERAIS DA PLATAFORMA GOUPAY</CardTitle>
           </CardHeader>
           <CardContent className="prose prose-invert max-w-none text-foreground space-y-6">
-            <p>Última atualização: [dd/mm/aaaa]</p>
             <p>
               A GouPay é uma plataforma digital de intermediação tecnológica que conecta Vendedores independentes a Compradores, oferecendo ferramentas de criação de páginas de vendas, área de membros e processamento técnico de pagamentos com repasse direto dos valores aos Vendedores.
             </p>
