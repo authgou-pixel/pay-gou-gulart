@@ -8,14 +8,27 @@ async function authorize(req: VercelRequest) {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
   const authHeader = req.headers["authorization"] || req.headers["Authorization"];
   const token = typeof authHeader === "string" && authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  if (!token) return { ok: false, status: 401 } as const;
-  const { data, error } = await supabase.auth.getUser(token);
-  if (error || !data?.user?.email) return { ok: false, status: 401 } as const;
   const raw = process.env.ADMIN_EMAILS || "authgou@gmail.com";
   const admins = raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-  const isAdmin = admins.includes((data.user.email || "").toLowerCase());
+  if (token) {
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data?.user?.email) return { ok: false, status: 401 } as const;
+    const email = (data.user.email || "").toLowerCase();
+    const isAdmin = admins.includes(email);
+    if (!isAdmin) return { ok: false, status: 403 } as const;
+    return { ok: true, supabase, email: data.user.email! } as const;
+  }
+  const csrfHeader = (req.headers["x-csrf-token"] || req.headers["X-Csrf-Token"]) as string | undefined;
+  const cookieHeader = (req.headers["cookie"] || req.headers["Cookie"]) as string | undefined;
+  const csrfCookie = (cookieHeader || "").split(";").map((s) => s.trim()).find((s) => s.startsWith("csrf_token="));
+  const csrfValue = csrfCookie ? csrfCookie.split("=")[1] : "";
+  if (!csrfHeader || !csrfValue || csrfHeader !== csrfValue) return { ok: false, status: 401 } as const;
+  const localEmailHeader = (req.headers["x-admin-email"] || req.headers["X-Admin-Email"]) as string | undefined;
+  const expectedLocal = (process.env.ADMIN_LOCAL_EMAIL || "authgou@gmail.com").toLowerCase();
+  const candidate = (localEmailHeader || "").toLowerCase();
+  const isAdmin = !!candidate && (candidate === expectedLocal || admins.includes(candidate));
   if (!isAdmin) return { ok: false, status: 403 } as const;
-  return { ok: true, supabase, email: data.user.email! } as const;
+  return { ok: true, supabase, email: candidate } as const;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

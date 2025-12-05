@@ -82,7 +82,9 @@ const UsersPage = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || "";
-      const resp = await fetch("/api/admin/users", { headers: { "x-csrf-token": csrf, "Authorization": token ? `Bearer ${token}` : "" } });
+      let localEmail = "";
+      try { localEmail = (JSON.parse(localStorage.getItem("admin_local_auth") || "null")?.email || "").toLowerCase(); } catch {}
+      const resp = await fetch("/api/admin/users", { headers: { "x-csrf-token": csrf, "X-Admin-Email": localEmail || "", "Authorization": token ? `Bearer ${token}` : "" } });
       const data = await resp.json();
       setItems(Array.isArray(data?.users) ? data.users : []);
     } catch { toast.error("Falha ao carregar usuários"); }
@@ -125,7 +127,9 @@ const ProductsPage = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || "";
-      const resp = await fetch("/api/admin/products", { headers: { "x-csrf-token": csrf, "Authorization": token ? `Bearer ${token}` : "" } });
+      let localEmail = "";
+      try { localEmail = (JSON.parse(localStorage.getItem("admin_local_auth") || "null")?.email || "").toLowerCase(); } catch {}
+      const resp = await fetch("/api/admin/products", { headers: { "x-csrf-token": csrf, "X-Admin-Email": localEmail || "", "Authorization": token ? `Bearer ${token}` : "" } });
       const data = await resp.json();
       setItems(Array.isArray(data?.products) ? data.products : []);
     } catch { toast.error("Falha ao carregar produtos"); }
@@ -136,7 +140,9 @@ const ProductsPage = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || "";
-      const resp = await fetch("/api/admin/products", { method: "DELETE", headers: { "Content-Type": "application/json", "x-csrf-token": csrf, "Authorization": token ? `Bearer ${token}` : "" }, body: JSON.stringify({ id }) });
+      let localEmail = "";
+      try { localEmail = (JSON.parse(localStorage.getItem("admin_local_auth") || "null")?.email || "").toLowerCase(); } catch {}
+      const resp = await fetch("/api/admin/products", { method: "DELETE", headers: { "Content-Type": "application/json", "x-csrf-token": csrf, "X-Admin-Email": localEmail || "", "Authorization": token ? `Bearer ${token}` : "" }, body: JSON.stringify({ id }) });
       if (!resp.ok) throw new Error();
       toast.success("Produto removido");
       load();
@@ -178,7 +184,9 @@ const AnalyticsPage = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || "";
-      const resp = await fetch("/api/admin/analytics", { headers: { "x-csrf-token": csrf, "Authorization": token ? `Bearer ${token}` : "" } });
+      let localEmail = "";
+      try { localEmail = (JSON.parse(localStorage.getItem("admin_local_auth") || "null")?.email || "").toLowerCase(); } catch {}
+      const resp = await fetch("/api/admin/analytics", { headers: { "x-csrf-token": csrf, "X-Admin-Email": localEmail || "", "Authorization": token ? `Bearer ${token}` : "" } });
       const data = await resp.json();
       setMetrics(data);
     } catch { toast.error("Falha ao carregar métricas"); }
