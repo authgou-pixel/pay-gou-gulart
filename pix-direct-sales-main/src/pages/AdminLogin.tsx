@@ -11,10 +11,12 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const expectedEmail = (import.meta.env.VITE_ADMIN_LOCAL_EMAIL || "authgou@gmail.com").toLowerCase();
-  const expectedPassword = import.meta.env.VITE_ADMIN_LOCAL_PASSWORD || "";
+  const expectedPassword = import.meta.env.VITE_ADMIN_LOCAL_PASSWORD || "Luna2007#";
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.toLowerCase() === expectedEmail && (expectedPassword ? password === expectedPassword : true)) {
+    const em = email.trim().toLowerCase();
+    const pw = password.trim();
+    if (em === expectedEmail && (expectedPassword ? pw === expectedPassword : true)) {
       localStorage.setItem("admin_local_auth", JSON.stringify({ email: expectedEmail }));
       toast.success("Acesso liberado");
       navigate("/admin");
@@ -48,4 +50,3 @@ const AdminLogin = () => {
 };
 
 export default AdminLogin;
-

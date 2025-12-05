@@ -54,16 +54,15 @@ const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/auth"); return; }
-      const email = session.user.email || "";
       const raw = import.meta.env.VITE_ADMIN_EMAILS || "authgou@gmail.com";
       const admins = raw.split(",").map((s: string) => s.trim().toLowerCase()).filter(Boolean);
       const localRaw = localStorage.getItem("admin_local_auth");
-      let isAdminLocal = false;
-      try { isAdminLocal = (JSON.parse(localRaw || "null")?.email || "").toLowerCase() === admins[0]; } catch {}
-      const isAdmin = admins.includes(email.toLowerCase()) || isAdminLocal;
+      let localEmail = "";
+      try { localEmail = (JSON.parse(localRaw || "null")?.email || "").toLowerCase(); } catch {}
+      const email = (session?.user?.email || "").toLowerCase();
+      const isAdmin = admins.includes(email) || admins.includes(localEmail);
+      if (!isAdmin) { navigate("/admin/login"); }
       setAllowed(isAdmin);
-      if (!isAdmin) toast.error("Sem permissão");
     };
     check();
   }, [navigate]);
