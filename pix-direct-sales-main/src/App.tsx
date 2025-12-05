@@ -34,7 +34,6 @@ const LessonView = lazy(() => import("./pages/LessonView"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Subscription = lazy(() => import("./pages/Subscription"));
 const Terms = lazy(() => import("./pages/Terms"));
-const Terms = lazy(() => import("./pages/Terms"));
 
 const queryClient = new QueryClient();
 
