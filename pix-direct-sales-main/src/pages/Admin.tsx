@@ -59,8 +59,10 @@ const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
       const localRaw = localStorage.getItem("admin_local_auth");
       let localEmail = "";
       try { localEmail = (JSON.parse(localRaw || "null")?.email || "").toLowerCase(); } catch {}
+      const expectedLocal = (import.meta.env.VITE_ADMIN_LOCAL_EMAIL || "authgou@gmail.com").toLowerCase();
       const email = (session?.user?.email || "").toLowerCase();
-      const isAdmin = admins.includes(email) || admins.includes(localEmail);
+      const isLocalAuth = localEmail === expectedLocal;
+      const isAdmin = isLocalAuth || admins.includes(email);
       if (!isAdmin) { navigate("/admin/login"); }
       setAllowed(isAdmin);
     };
