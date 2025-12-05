@@ -33,6 +33,7 @@ const Sales = lazy(() => import("./pages/Sales"));
 const LessonView = lazy(() => import("./pages/LessonView"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Subscription = lazy(() => import("./pages/Subscription"));
+const Terms = lazy(() => import("./pages/Terms"));
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/dashboard/new-product" element={<NewProduct />} />
             <Route path="/dashboard/settings" element={<Settings />} />
             <Route path="/dashboard/subscription" element={<Subscription />} />
+            <Route path="/dashboard/terms" element={<Terms />} />
             <Route path="/dashboard/product/:productId" element={<ProductManage />} />
             <Route path="/members" element={<Members />} />
             <Route path="/members/product/:productId/lesson/:lessonId" element={<LessonView />} />

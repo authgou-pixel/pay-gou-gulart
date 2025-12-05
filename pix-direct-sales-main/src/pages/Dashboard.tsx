@@ -407,6 +407,13 @@ const Dashboard = () => {
         >
           <CreditCard className="h-4 w-4" /> {desktopSidebarCollapsed ? null : <span className="text-foreground">Pagamentos</span>}
         </Button>
+        <Button 
+          variant="ghost" 
+          className="justify-start gap-2 bg-transparent hover:bg-transparent border-none rounded-none shadow-none h-10 px-2"
+          onClick={() => navigate("/dashboard/terms")}
+        >
+          {desktopSidebarCollapsed ? null : <span className="text-foreground">Termos</span>}
+        </Button>
         {!desktopSidebarCollapsed && (
           <Button
             variant="ghost"
@@ -447,6 +454,9 @@ const Dashboard = () => {
           <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/settings"); setMobileSidebarExpanded(false); }}>
             <CreditCard className="h-5 w-5" />
             {mobileSidebarExpanded && <span>Pagamentos</span>}
+          </Button>
+          <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/terms"); setMobileSidebarExpanded(false); }}>
+            {mobileSidebarExpanded && <span>Termos</span>}
           </Button>
           <Button variant="ghost" className={`justify-start h-12 px-2 gap-3`} onClick={() => { navigate("/dashboard/subscription"); setMobileSidebarExpanded(false); }}>
             {mobileSidebarExpanded && <span>Upgrade</span>}
