@@ -19,7 +19,7 @@ const Subscription = () => {
   const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
   const [paymentId, setPaymentId] = useState<string>("");
   const [copied, setCopied] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "trial">("monthly");
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "trial">("trial");
   const enableTrial = false;
 
   useEffect(() => {
@@ -205,9 +205,9 @@ const Subscription = () => {
                     <li className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> Integração Mercado Pago para vendas de produtos.</li>
                   </ul>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <Button className="w-full bg-gradient-hero hover:opacity-90" onClick={() => { setSelectedPlan("monthly"); handleCreate(); }}>Escolher Plano Mensal</Button>
+                    <Button variant="outline" className="w-full" onClick={() => { setSelectedPlan("monthly"); handleCreate(); }}>Escolher Plano Mensal</Button>
                     {enableTrial && (
-                      <Button variant="outline" className="w-full" onClick={() => { setSelectedPlan("trial"); handleCreate(); }}>Plano de Teste (R$ 2,00 / 5 min)</Button>
+                      <Button className="w-full bg-gradient-hero hover:opacity-90" onClick={() => { setSelectedPlan("trial"); handleCreate(); }}>Plano de Teste (R$ 2,00 / 5 min)</Button>
                     )}
                   </div>
                   {enableTrial && (
