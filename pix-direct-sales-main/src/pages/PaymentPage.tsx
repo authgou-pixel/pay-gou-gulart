@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { QrCode, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,6 +28,7 @@ const PaymentPage = () => {
   const [touched, setTouched] = useState<{ email: boolean; name: boolean }>({ email: false, name: false });
   const [showPayment, setShowPayment] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [qrCode, setQrCode] = useState<string>("");
   const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
   const [paymentId, setPaymentId] = useState<string>("");
@@ -60,6 +62,10 @@ const PaymentPage = () => {
       toast.error("Preencha todos os campos");
       return;
     }
+    if (!acceptedTerms) {
+      toast.error("Você deve aceitar os Termos da GouPay");
+      return;
+    }
 
     try {
       const resp = await fetch("/api/create-payment", {
@@ -69,6 +75,7 @@ const PaymentPage = () => {
           productId: product!.id,
           buyerEmail,
           buyerName,
+          acceptedTerms: true,
         }),
       });
 
@@ -216,10 +223,17 @@ const PaymentPage = () => {
                 </div>
                 <Check className="h-5 w-5 text-emerald-600" />
               </div>
+              <div className="flex items-center gap-3 text-sm">
+                <Checkbox id="checkout_terms" checked={acceptedTerms} onCheckedChange={(v) => setAcceptedTerms(Boolean(v))} />
+                <label htmlFor="checkout_terms" className="text-[#2B2B2B]">
+                  <span className="align-middle">Declaro que li e aceito os </span>
+                  <a href="/dashboard/terms" target="_blank" rel="noreferrer" className="text-[#6A2FE0] underline">Termos da GouPay</a>
+                </label>
+              </div>
               <Button
                 className="w-full bg-emerald-600 hover:bg-emerald-700"
                 onClick={handleGeneratePayment}
-                disabled={sellerBlocked || !emailValid || !nameValid}
+                disabled={sellerBlocked || !emailValid || !nameValid || !acceptedTerms}
               >
                 Finalizar compra
               </Button>

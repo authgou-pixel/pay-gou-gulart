@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -14,6 +15,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [acceptedTermsSignup, setAcceptedTermsSignup] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,10 +42,14 @@ const Auth = () => {
         toast.success("Login realizado com sucesso!");
         navigate("/dashboard");
       } else {
+        if (!acceptedTermsSignup) {
+          toast.error("Você deve aceitar os Termos da GouPay");
+          return;
+        }
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { name }, emailRedirectTo: `${import.meta.env.VITE_PUBLIC_BASE_URL || window.location.origin}/dashboard` },
+          options: { data: { name, accepted_terms: true, accepted_terms_at: new Date().toISOString() }, emailRedirectTo: `${import.meta.env.VITE_PUBLIC_BASE_URL || window.location.origin}/dashboard` },
         });
         if (error) throw error;
         if (data.session) {
@@ -86,14 +92,23 @@ const Auth = () => {
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="h-11 text-base md:h-10 md:text-sm" />
+          </div>
+          <Button type="submit" className="w-full h-11 text-base md:h-10 md:text-sm" disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLogin ? "Entrar" : "Cadastrar"}
+          </Button>
+          {!isLogin && (
+            <div className="flex items-center gap-3 text-sm">
+              <Checkbox id="signup_terms" checked={acceptedTermsSignup} onCheckedChange={(v) => setAcceptedTermsSignup(Boolean(v))} />
+              <label htmlFor="signup_terms" className="text-foreground">
+                <span className="align-middle">Declaro que li e aceito os </span>
+                <a href="/dashboard/terms" target="_blank" rel="noreferrer" className="text-primary underline">Termos da GouPay</a>
+              </label>
             </div>
-            <Button type="submit" className="w-full h-11 text-base md:h-10 md:text-sm" disabled={loading}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : isLogin ? "Entrar" : "Cadastrar"}
-            </Button>
-            <Button type="button" variant="ghost" className="w-full h-11 text-base md:h-10 md:text-sm" onClick={() => setIsLogin((v) => !v)}>
-              {isLogin ? "Criar conta" : "Já tenho conta"}
-            </Button>
-          </form>
+          )}
+          <Button type="button" variant="ghost" className="w-full h-11 text-base md:h-10 md:text-sm" onClick={() => setIsLogin((v) => !v)}>
+            {isLogin ? "Criar conta" : "Já tenho conta"}
+          </Button>
+        </form>
         </CardContent>
       </Card>
     </div>
