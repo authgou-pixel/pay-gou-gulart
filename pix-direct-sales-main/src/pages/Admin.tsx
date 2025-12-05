@@ -31,7 +31,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center gap-2 text-primary"><Shield className="h-5 w-5" /><span className="font-semibold">Admin</span></div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" onClick={() => navigate("/dashboard")}>Voltar ao Dashboard</Button>
-            <Button variant="outline" onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}>Sair <LogOut className="ml-2 h-4 w-4" /></Button>
+            <Button variant="outline" onClick={async () => { localStorage.removeItem("admin_local_auth"); await supabase.auth.signOut(); navigate("/"); }}>Sair <LogOut className="ml-2 h-4 w-4" /></Button>
           </div>
         </div>
       </header>
@@ -40,6 +40,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <Link to="/admin/users"><Button variant="outline" className="gap-2"><UsersIcon className="h-4 w-4" />Contas</Button></Link>
           <Link to="/admin/products"><Button variant="outline" className="gap-2"><Package className="h-4 w-4" />Produtos</Button></Link>
           <Link to="/admin/analytics"><Button variant="outline" className="gap-2"><BarChart3 className="h-4 w-4" />Análises</Button></Link>
+          <Link to="/admin/login"><Button variant="ghost">Login Admin</Button></Link>
         </nav>
         {children}
       </main>
@@ -57,7 +58,10 @@ const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
       const email = session.user.email || "";
       const raw = import.meta.env.VITE_ADMIN_EMAILS || "authgou@gmail.com";
       const admins = raw.split(",").map((s: string) => s.trim().toLowerCase()).filter(Boolean);
-      const isAdmin = admins.includes(email.toLowerCase());
+      const localRaw = localStorage.getItem("admin_local_auth");
+      let isAdminLocal = false;
+      try { isAdminLocal = (JSON.parse(localRaw || "null")?.email || "").toLowerCase() === admins[0]; } catch {}
+      const isAdmin = admins.includes(email.toLowerCase()) || isAdminLocal;
       setAllowed(isAdmin);
       if (!isAdmin) toast.error("Sem permissão");
     };
