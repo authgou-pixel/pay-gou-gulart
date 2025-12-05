@@ -19,8 +19,8 @@ const Subscription = () => {
   const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
   const [paymentId, setPaymentId] = useState<string>("");
   const [copied, setCopied] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "trial">("trial");
-  const enableTrial = true;
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "trial">("monthly");
+  const enableTrial = false;
 
   useEffect(() => {
     const init = async () => {
