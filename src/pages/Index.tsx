@@ -13,10 +13,10 @@ const Index = () => {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
         <div className="container mx-auto px-4 py-20 text-center text-primary-foreground relative">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
-            Venda Produtos Digitais com PIX
+            Faça suas vendas sem pagar taxas Venda com a GouPay.
           </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Plataforma inovadora para vender e-books, PDFs e vídeos com pagamento instantâneo via PIX
+            Uma plataforma feita para quem quer alta conversão, aprovação automática e saque imediato direto no banco, sem depender da plataforma.
           </p>
           <div className="mt-10 flex justify-center">
             <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-4xl h-auto rounded-xl border border-primary/30 shadow-lg" loading="lazy" referrerPolicy="no-referrer" />

@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Rocket, Check, QrCode, Copy } from "lucide-react";
 import { toast } from "sonner";
-import { computeMonthlyExpiry, getRemainingMs, shouldNotify, formatRemainingMessage } from "@/utils/subscription";
 
 const Subscription = () => {
   const navigate = useNavigate();
@@ -33,15 +32,12 @@ const Subscription = () => {
       const userId = session.user.id;
       const { data } = await supabase
         .from("subscriptions")
-        .select("status,expires_at,activated_at")
+        .select("status,expires_at")
         .eq("user_id", userId)
         .maybeSingle();
       if (data) {
         setStatus(data.status);
-        const fromDb = data.expires_at as string | null;
-        const activated = data.activated_at as string | null;
-        const computed = activated ? computeMonthlyExpiry(activated) : fromDb;
-        setExpiresAt(computed || null);
+        setExpiresAt(data.expires_at);
       }
       const maybeEmail = session.user.email;
       setBuyerEmail(typeof maybeEmail === "string" ? maybeEmail : "");
@@ -120,19 +116,23 @@ const Subscription = () => {
 
   useEffect(() => {
     if (!expiresAt) return;
-    const remaining = getRemainingMs(expiresAt);
+    const end = new Date(expiresAt).getTime();
+    const now = Date.now();
+    const remaining = end - now;
     if (remaining <= 0) return;
-    const sevenDays = 7 * 24 * 60 * 60_000;
-    if (remaining <= sevenDays) {
-      toast.info(formatRemainingMessage(remaining));
-      return;
+
+    let t: number | undefined;
+    if (remaining <= 10 * 60_000) {
+      const ms = remaining - 60_000;
+      if (ms > 0) t = window.setTimeout(() => toast.info("Seu plano expira em 1 minuto"), ms);
+    } else if (remaining >= 24 * 60 * 60_000) {
+      const ms = remaining - 24 * 60 * 60_000;
+      t = window.setTimeout(() => toast.info("Seu plano expira em 24 horas"), ms);
+    } else {
+      const ms = remaining - 60 * 60_000;
+      if (ms > 0) t = window.setTimeout(() => toast.info("Seu plano expira em 1 hora"), ms);
     }
-    const ms = remaining - sevenDays;
-    const t = window.setTimeout(() => {
-      const r = getRemainingMs(expiresAt);
-      if (shouldNotify(r)) toast.info(formatRemainingMessage(r));
-    }, ms);
-    return () => { clearTimeout(t); };
+    return () => { if (t) clearTimeout(t); };
   }, [expiresAt]);
 
   if (loading) {

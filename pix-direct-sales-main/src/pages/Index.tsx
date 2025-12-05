@@ -41,7 +41,7 @@ const Index = () => {
                   <span>Plataforma em crescimento</span>
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-                  <span className="block">Venda mais. Receba direto. Sem taxas.</span>
+                  <span className="block">Faça suas vendas sem pagar taxas Venda com a GouPay.</span>
                 </h1>
                 <p className="text-lg md:text-xl text-[#CFCFCF] mt-6 max-w-xl">
                   Uma plataforma feita para quem quer alta conversão, aprovação automática e saque imediato direto no banco, sem depender da plataforma.
