@@ -44,7 +44,7 @@ const Index = () => {
                   <span className="block">Faça suas vendas sem pagar taxas Venda com a GouPay.</span>
                 </h1>
                 <p className="text-lg md:text-xl text-[#CFCFCF] mt-6 max-w-xl">
-                  Uma plataforma feita para quem quer alta conversão, aprovação automática e saque imediato direto no banco, sem depender da plataforma.
+                  Uma plataforma feita para quem quer alta conversão, aprovação automática e venda imediata direto no banco, sem depender da plataforma.
                 </p>
                 <div className="mt-8 hidden md:flex flex-col sm:flex-row gap-4">
                   <Button className="bg-gradient-to-r from-[#8A2BE2] to-[#D34FE2] text-black font-semibold hover:opacity-90 px-6 py-6 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8A2BE2] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1A1A] active:scale-[0.99] transition" onClick={() => navigate("/auth?signup=1")}>

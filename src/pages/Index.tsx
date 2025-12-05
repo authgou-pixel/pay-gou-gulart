@@ -16,7 +16,7 @@ const Index = () => {
             Faça suas vendas sem pagar taxas Venda com a GouPay.
           </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Uma plataforma feita para quem quer alta conversão, aprovação automática e saque imediato direto no banco, sem depender da plataforma.
+            Uma plataforma feita para quem quer alta conversão, aprovação automática e venda imediata direto no banco, sem depender da plataforma.
           </p>
           <div className="mt-10 flex justify-center">
             <img src="https://i.imgur.com/vtcLGj6.png" alt="Visão geral da plataforma" className="w-full max-w-4xl h-auto rounded-xl border border-primary/30 shadow-lg" loading="lazy" referrerPolicy="no-referrer" />
